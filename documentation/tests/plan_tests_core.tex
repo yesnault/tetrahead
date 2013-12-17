@@ -1,0 +1,98 @@
+\input{../document_type/document_type}
+\usepackage{url}
+
+% Titre du document qui apparait sur la première page
+\newcommand{\titre}{Plan de Tests : CORE}
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{Applicable}
+\newcommand{\version}{1.1}
+\newcommand{\datedoc}{31/01/2006}
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{30/01/2006}{Vincent MAHE}{Création}{1.0}
+\histo{31/01/2006}{Yvonnick ESNAULT}{Relecture}{1.1}
+\end{historique}
+
+\section{Description}
+
+Ce document décrit l'ensemble des tests prévus sur la partie \emph{Core} de l'application.
+Il recense les test unitaires et planifie leur déroulement. Il décrit les moyens utilisés pour procéder aux vérifications.
+
+\section{Généralités}
+
+\subsection{Spécificités - Moyens}
+
+Le projet repose sur la production et le traitement d'ondes ramenées à des valeurs numériques.
+Les tests unitaires classiques sont complétement inadaptés au test des valeurs produites par les modules.
+Aussi le test de ces modules passera par un affichage des valeurs produites sur un \emph{oscilloscope}, avec contrôle visuel de la bonne forme des ondes.
+Des tests unitaires classiques seront opérés sur les éléments du \emph{Core} autres que les modules.
+
+\subsection{Réalisation}
+
+Les tests visuels (modules) réalisés feront l'objet de compte-rendus dans un document \emph{tests\_modules.tex}.
+Celui-ci précisera :
+\begin{itemize}
+ \item (en titre de section) la personne et la date de la série de tests,
+ \item la liste des tests effectués,
+ \item le cas échéant, les erreurs corrigées.
+\end{itemize}
+\smallskip
+
+Les tests unitaires classiques (éléments du \emph{Core}) feront l'objet de compte-rendus dans un document \emph{tests\_core.tex}.
+À chaque fois, tous les tests automatiques seront exécutés.
+Celui-ci précisera :
+\begin{itemize}
+ \item (en titre de section) la personne et la date de la série de tests,
+ \item le cas échéant, les erreurs repérées, ainsi que la nature des corrections.
+\end{itemize}
+
+\section{Planning}
+
+\subsection{Tests unitaires Core}
+
+\begin{itemize}
+ \item Paramètres et ports
+  \begin{itemize}
+   \item ParameterValue
+   \item DiscreteParameter
+   \item ContinuousParameter
+   \item PortIn
+   \item PortOut
+  \end{itemize}
+ \item Autres éléments
+  \begin{itemize}
+   \item AFactory
+   \item Playing
+   \item Paused
+   \item Stopped
+   \item Synthetiseur
+  \end{itemize}
+\end{itemize}
+
+\subsection{Tests visuels Modules}
+
+\begin{itemize}
+ \item VCO
+ \item OUT
+ \item VCF
+ \item ADSR
+ \item VCA
+ \item Mixer
+\end{itemize}
+
+% Fin du document
+\end{document}

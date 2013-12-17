@@ -1,0 +1,207 @@
+\input{../document_type/document_type}
+\usepackage{url}
+
+% Titre du document qui apparait sur la première page
+\newcommand{\titre}{Plan de Tests : Interface utilisateur}
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{Applicable}
+\newcommand{\version}{1.0}
+\newcommand{\datedoc}{13/02/2006}
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{30/01/2006}{Vincent MAHE}{Création}{0.5}
+\histo{13/02/2006}{Vincent MAHÉ}{Rédaction}{1.0}
+\histo{13/02/2006}{Vincent MAHÉ}{Corrections}{1.1}
+\histo{13/02/2006}{Yvonnick ESNAULT}{Relecture}{1.2}
+\end{historique}
+
+\section{Description}
+
+Ce document décrit l'ensemble des tests prévus sur la partie \emph{GUI} (Graphical User Interface) de l'application.
+Il recense les tests et planifie leur déroulement. Il décrit les moyens utilisés pour procéder aux vérifications.
+
+\section{Généralités}
+
+\subsection{Spécificités - Moyens}
+
+Le projet repose sur la production et le traitement d'ondes ramenées à des valeurs numériques.
+Les tests unitaires classiques ne sont pas adaptés au test des interfaces graphiques.
+
+Aussi le test des éléments d'interface passera par un protocole des actions à enchainer, avec contrôle visuel de la bonne réalisation de ces actions.
+
+\subsection{Réalisation}
+
+Les tests d'interface réalisés feront l'objet de compte-rendus dans un document \emph{tests\_interface.tex}.
+Celui-ci précisera, pour chaque enchainement de test :
+\begin{itemize}
+ \item (en titre de section) la personne et la date du test,
+ \item le cas échéant, les défauts rencontrés
+ \item le cas échéant, le remède proposé
+ \item le cas échéant, les erreurs corrigées
+ \item le statut du cas :
+ \begin{description}
+  \item[FIXME :] il reste un défaut non réglé
+  \item[PASSED :] le logiciel est conforme
+  \item[TODO :] indiquer l'amélioration repérée lors du test, non demandée par la conception
+ \end{description}
+\end{itemize}
+
+\subsection{Intégration}
+
+\textbf{Le jeu complet d'enchainements ci-après devra être rejoué en fin de phase d'intégration, pour contrôler qu'aucun défaut n'a été apporté au bon fonctionnement de l'interface utilisateur par cette intégration ou les étapes intermédiaires.}
+
+\section{Planning}
+
+\subsection{Tests des éléments de base}
+
+\subsubsection{Paramètres et ports}
+
+  \begin{description}
+   \item [ParameterValue] : testé via les deux types de \emph{Parameter}
+   \item [DiscreteParameter] : créer un VCO puis vérifier que son paramètre \emph{Shapes} a la bonne valeur par défaut et que toutes ses valeurs sont accessibles (passage de la première à la dernière puis retour). Contrôler la bulle d'aide.
+   \item [ContinuousParameter] : créer un VCO puis vérifier que son paramètre \emph{Pitch} a la bonne valeur par défaut et qu'il peut être changé en tournant le bouton, en saisissant une valeur à la main (elle doit être conservée) et que la mise du bouton au minimum donne bien la valeur minimum du Pitch (20 Hz), ainsi qu'au maximum (3250 Hz). Contrôler la bulle d'aide.
+   \item [PortIn] : créer un ADSR Trigger puis vérifier qu'il comporte bien 3 ports d'entrée correctement dénommés, et qu'il est possible de connecter à chacun un port de sortie d'un module VCO. Contrôler la bulle d'aide.
+   \item [PortOut (1)] : créer un VCO puis vérifier qu'il comporte bien un port de sortie correctement nommé, qu'il est possible de connecter au port d'entrée d'un module OUT Direct. Contrôler la bulle d'aide.
+   \item [PortOut (2)] : créer un OUT Direct puis vérifier qu'il ne comporte pas de port de sortie.
+   \item [Connecteur (1)] : le test d'établissement d'une connection a été fait ci-dessus dans les tests des ports. Vérifier sur un connecteur existant qu'il peut être enlevé. Contrôler la bulle d'aide.
+   \item [Connecteur (2)] : tenter de relier un port de sortie à un autre port de sortie. L'opération ne doit pas être possible et l'indiquer à l'utilisateur. Tenter d'établir une connexion depuis un port d'entrée vers un port de sortie. L'opération ne doit pas être possible et l'indiquer à l'utilisateur.
+  \end{description}
+
+\subsubsection{Synthétiseur}
+
+  \begin{description}
+   \item [Playing] : créer un VCO et un OUT Direct puis cliquer sur \emph{Play} : un son doit sortir. Vérifier que ce bouton ainsi que le bouton \emph{Reset} sont désactivés, tandis que le bouton \emph{Stop} est activé. Contrôler la bulle d'aide.
+   \item [Stopped] : réaliser le test précédent puis cliquer sur \emph{Stop} : le son doit cesser. Vérifier que ce bouton est désactivé, tandis que les boutons \emph{Play} et \emph{Reset} sont réactivés. Contrôler la bulle d'aide.
+   \item [Reset] : Créer un VCO et un ADHSR puis modifier TOUS leurs paramètres. Cliquer ensuite sur le bouton \emph{Reset} : tous les paramètres des deux modules doivent revenir à leur valeur par défaut. Contrôler la bulle d'aide.
+   \item [Options] : créer un exemplaire de chacun des différents modules ainsi qu'un second VCO, puis cliquer sur le bouton. Vérifier que la fréquence a la bonne valeur par défaut (44,1 kHz). Saisir ensuite une nouvelle fréquence et vérifier que celle-ci est bien passée à tous les modules présents. Contrôler la bulle d'aide.
+   \item [About] : cliquer sur le bouton puis vérifier que s'affiche bien le logo et le nom de chacun des 4 membres de l'équipe, suivis de l'adresse Internet du projet. Contrôler la bulle d'aide.
+  \end{description}
+
+\subsection{Tests visuels des Modules}
+
+\subsubsection{LFO}
+
+\begin{description}
+ \item[Nom] : \emph{LFO}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : aucun
+ \item[Paramètres discrets] : \emph{Shapes}, de valeurs graphiques représentant les ondes carrées (défaut), en dents de scie, en toit d'usine, triangulaires et sinusoïdales. Contrôler la bulle d'aide.
+ \item[Paramètres continus] : \emph{Pitch}, de minimum 0 Hz et de maximum 20 Hz. Contrôler la bulle d'aide.
+ \item[Port de sortie] : \emph{Out}. Contrôler la bulle d'aide.
+\end{description}
+
+\subsubsection{VCO}
+
+\begin{description}
+ \item[Nom] : \emph{VCO}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{PitchIn}. Pas de \emph{sigIn}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : \emph{Shapes}, de valeurs graphiques représentant les ondes possibles : carrées (défaut), en dents de scie, en toit d'usine, triangulaires et sinusoïdales. Contrôler la bulle d'aide.
+ \item[Paramètres continus] : \emph{Pitch}, de minimum 0 Hz et de maximum 20 Hz. Contrôler la bulle d'aide.
+ \item[Port de sortie] : \emph{Out}. Contrôler la bulle d'aide.
+\end{description}
+
+\subsubsection{VCF}
+
+\begin{description}
+ \item[Nom] : \emph{VCF}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{Cut-Off} et \emph{sigIn}.
+ \item[Paramètres discrets] : \emph{Mode}, de valeurs \emph{Low Pass} (défaut) et \emph{High Pass}.
+ \item[Paramètres continus] : aucun
+ \item[Ports de sortie] : \emph{Out}. Contrôler la bulle d'aide.
+\end{description}
+
+\subsubsection{VCF Param}
+
+\begin{description}
+ \item[Nom] : \emph{VCF Param}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{Cut-Off} et \emph{sigIn}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : \emph{Mode}, de valeurs \emph{Low Pass} (défaut) et \emph{High Pass}. Contrôler la bulle d'aide.
+ \item[Paramètres continus] : \emph{Cut-Off}, de minimum 0 Hz et de maximum la moitié de la fréquence d'échantillonnage. Changer cette dernière puis vérifier que le maximum s'est ajusté. Contrôler la bulle d'aide.
+ \item[Port de sortie] : \emph{Out}. Contrôler la bulle d'aide.
+\end{description}
+
+\subsubsection{ADHSR}
+
+\begin{description}
+ \item[Nom] : \emph{ADHSR}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{sigIn}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : \emph{Refaire}, avec les valeurs \emph{Boucle} [défaut) et \emph{Unique}. Contrôler la bulle d'aide.
+ \item[Paramètres continus] : \emph{A attaque} de 0 à 2000 ms, \emph{D descente} de 0 à 2000 ms, \emph{H supension} de 0 à 2000 ms, \emph{R retombée} de 0 à 2000 ms, et \emph{S volume} de 0 à 100 \%. Contrôler la bulle d'aide.
+ \item[Port de sortie] : \emph{Out}. Contrôler la bulle d'aide.
+\end{description}
+
+\subsubsection{ADSR Trigger}
+
+\begin{description}
+ \item[Nom] : \emph{ADSR Trigger}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{sigIn}, ainsi que \emph{Gate} et \emph{Trigger}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : aucun
+ \item[Paramètres continus] : \emph{A attaque} de 0 à 2000 ms, \emph{D descente} de 0 à 2000 ms, \emph{R retombée} de 0 à 2000 ms, et \emph{S volume} de 0 à 100 \%. Contrôler la bulle d'aide.
+ \item[Port de sortie] : \emph{Out}. Contrôler la bulle d'aide.
+\end{description}
+
+\subsubsection{VCA}
+
+\begin{description}
+ \item[Nom] : \emph{VCA}.
+ \item[Ports d'entrée] : \emph{sigIn}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : aucun
+ \item[Paramètres continus] : \emph{Gain}, allant de 0 à 200 \%. Contrôler la bulle d'aide.
+ \item[Port de sortie] : \emph{Out}. Contrôler la bulle d'aide.
+\end{description}
+
+\subsubsection{Mixer}
+
+\begin{description}
+ \item[Nom] : \emph{Mixer}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{In 1}, \emph{In 2}, \emph{In 3}, \emph{In 4}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : aucun.
+ \item[Paramètres continus] : \emph{Gain 1}, \emph{Gain 2}, \emph{Gain 3}, \emph{Gain 4}, allant de 0 à 100 \%. Contrôler la bulle d'aide.
+ \item[Port de sortie] : \emph{Out}. Contrôler la bulle d'aide.
+\end{description}
+
+\subsubsection{OUT Direct}
+
+\begin{description}
+ \item[Nom] : \emph{OUT Direct}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{sigIn}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : aucun
+ \item[Paramètres continus] : aucun
+ \item[Port de sortie] : aucun
+\end{description}
+
+\subsubsection{OUT File}
+
+\begin{description}
+ \item[Nom] : \emph{OUT File}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{sigIn}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : aucun
+ \item[Paramètres continus] : aucun
+ \item[Port de sortie] : aucun
+\end{description}
+
+\subsubsection{Oscilloscope}
+
+\begin{description}
+ \item[Nom] : \emph{Oscillo}. Contrôler la bulle d'aide.
+ \item[Ports d'entrée] : \emph{sigIn}. Contrôler la bulle d'aide.
+ \item[Paramètres discrets] : aucun
+ \item[Paramètres continus] : aucun
+ \item[Port de sortie] : aucun
+\end{description}
+
+% Fin du document
+\end{document}

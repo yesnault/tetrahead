@@ -1,0 +1,134 @@
+\section{Conventions graphiques}
+
+\subsection{Description de la fenêtre}
+
+\begin{figure}[!htpb]
+  \begin{center}
+	\includegraphics{images/screenshot}
+    \caption{Capture d'écran de la fenêtre principale}
+  \end{center}
+\end{figure}
+
+Elle compte trois zones :
+\begin{enumerate}
+\item Une barre d'outils de commandes, \index{Barre d'outils!Commandes}située 
+en haut de la fenêtre
+\item Un espace de travail\index{Espace de travail},
+\item Une barre d'outils de création de modules\index{Barre d'outils!Creation 
+de modules@Création de modules}, en bas de la fenêtre.
+\end{enumerate}
+
+\subsection{La barre d'outils de commande}
+
+Avec cette barre d'outils, lancer (ou arrêter) l'exécution du synthtétiseur. 
+Elle comporte cinq boutons :
+\begin{itemize}
+\item Un bouton \emph{Lecture} \index{Lecture}: Cliquer sur ce bouton pour 
+démarrer l'exécution du synthétiseur.
+\item Un bouton \emph{Arrêt} \index{Arret@Arrêt}: Cliquer sur ce bouton pour 
+stopper l'exécution du synthétiseur.
+\item Un bouton \emph{Reset} \index{Reset}: Cliquer sur ce bouton pour remettre 
+à $0$ tous les paramètres de tous les modules.
+\item Un bouton \emph{Options} \index{Options}: Cliquer sur ce bouton pour changer les options du synthétiseur, à savoir la fréquence d'échantillonnage utilisée pour la version actuelle.
+\item Un bouton \emph{A propos de...} \index{About}: Cliquer sur ce bouton pour en savoir plus sur les auteurs de \tth.
+\end{itemize}
+
+Lancer la lecture désactive les boutons \emph{Lecture} et \emph{Reset} et active le bouton 
+\emph{Arrêt}. Arrêter la lecture désactive le bouton \emph{Arrêt} et active les 
+boutons \emph{Lecture}et \emph{Reset}.
+
+\subsection{L'espace de travail}
+
+Dans cette zone, créer les modules désirés, les connecter, modifier leurs 
+paramètres pour lancer ensuite l'exécution du synthétiseur.
+
+Si cette zone est trop petite pour voir tous les modules créés, des ascenseurs 
+apparaissent pour faire défiler la vue.
+
+Cette zone contient une corbeille. Déposer un module au-dessus de cette 
+corbeille \index{Corbeille}supprime ce module. Cette corbeille peut être déplacée.
+
+\subsection{La barre d'outils de création de modules}
+
+Avec cette barre d'outils\index{Barre d'outils!Creation 
+de modules@Création de modules}, créer vos modules dans l'espace de travail en faisant 
+glisser un bouton vers la zone de travail. Les boutons sont :
+
+\begin{itemize}
+\item VCO
+\item LFO
+\item VCF
+\item VCF Param
+\item ADHSR
+\item ADSRTrigger
+\item VCA
+\item Mixer
+\item OUTDirect
+\item OUTFile
+\item Oscilloscope
+\end{itemize}
+
+Chaque bouton crée un module du même nom. Pour plus d'informations sur ces 
+modules, se reporter à la section~\ref{secDescModules}, 
+page~\pageref{secDescModules}.
+
+\subsection{Description d'un module}
+
+Tous les modules \index{Module}sont dessinés de la même façon.\\
+Voici, par exemple, le module VCO :
+
+\begin{figure}[!htpb]
+  \begin{center}
+    % screen shot d'un VCO
+\includegraphics[scale=0.7]{images/module_vco.png}
+    \caption{Capture d'écran de la fenêtre principale}
+  \end{center}
+\end{figure}
+
+Les modules \index{Module!Description}sont composés de la façon suivante : 
+\bigskip
+
+\begin{center}
+	\begin{tabular}{|c|c|c|}
+	\hline \multicolumn{3}{|c|}{Nom du module} \\ 
+	\hline ports & paramètres continus  & port de \\ 
+				   d'entrée & et discrets & sortie \\ 
+				   &  & \\ 
+	\hline
+	\end{tabular} 
+\end{center}
+\bigskip
+
+Chaque module possède un nombre quelconque de ports d'entrées, un nombre 
+quelconque de paramètres et au plus un port de sortie.
+
+Les paramètres sont des boutons que l'on peut tourner avec la souris. Il existe 
+deux types de paramètres : les paramètres discrets et continus. À l'écran, un 
+paramètre continu est entouré de graduations, contrairement à un paramètre 
+discret.
+
+\subsubsection{Les paramètres discrets}
+\index{Parametre@Paramètre!Discret}
+Un paramètre discret se modifie en cliquant sur le bouton. Un clic droit tourne 
+le bouton d'un cran vers la droite, tandis qu'un clic gauche le ramène vers la 
+gauche.
+
+Les paramètres discrets ne peuvent prendre qu'une certaine valeur parmi une 
+liste finie de valeurs. Par exemple, pour le VCO, le paramètre \emph{Shapes} 
+(le paramètre à droite) ne peut prendre comme valeurs que \emph{Carré}, 
+\emph{Toit d'usine}, \emph{Dents de scie}, \emph{Triangle}, ou \emph{Sinusoïde}, 
+représentés.par une image correspondante de l'onde.
+
+\subsubsection{Les paramètres continus}
+\index{Parametre@Paramètre!Continu}
+La valeur d'un paramètre continu appartient à un certain intervalle. Par 
+exemple, pour le VCO, le paramètre \emph{Pitch} (à gauche) prend une valeur 
+entre 20 Hz et 3520 Hz.
+
+Pour tourner le bouton, il faut appuyer dessus avec le bouton de la souris puis 
+la déplacer autour du centre. La valeur augmente quand on tourne le bouton vers 
+la droite.
+
+Avec la souris, il est difficile d'obtenir une valeur précise. Aussi \tth 
+permet de saisir exactement la valeur désirée au clavier dans la zone de texte 
+juste au dessus du bouton.

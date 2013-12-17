@@ -1,0 +1,57 @@
+\input{../document_type/document_type}
+
+\newcommand{\titre}{Java Sound}
+
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{En progression}
+\newcommand{\version}{1.0}
+\newcommand{\datedoc}{30/01/2006}
+
+\begin{document}
+
+%\frontmatter
+
+\input{../document_type/titre}
+
+%mainmatter
+
+\begin{historique}
+ %\histo{Date}{Prénom Nom}{Modification}{Version}
+ \histo{30/01/2006}{Vincent MAHÉ}{Création}{1.0}
+\end{historique}
+
+\section{Description}
+Ce document recense les différentes informations relatives à la mise en ouevre du son au sein du langage Java et de son API dédiée.
+
+\section{Formats de données Audio}
+
+Source : \url{http://java.sun.com/j2se/1.4.2/docs/guide/sound/programmer\_guide/chapter2.html#112348}
+\smallskip
+
+In the Java Sound API, a data format is represented by an AudioFormat object, which includes the following attributes:
+\begin{itemize}
+ \item Encoding technique, usually pulse code modulation (PCM)
+ \item Number of channels (1 for mono, 2 for stereo, etc.)
+ \item Sample rate (number of samples per second, per channel)
+ \item Number of bits per sample (per channel)
+ \item Frame rate
+ \item Frame size in bytes
+ \item Byte order (big-endian or little-endian)
+\end{itemize}
+
+\subsection{Encodage}
+Seul l'encodage \emph{linear PCM} stocke les valeurs en tant que fonction directe (linéaire) de l'amplitude sonore. Il doit donc être celui utilisé.
+
+\subsection{Canaux}
+Nous nous contenterons pour l'instant d'un canal monophonique.
+
+\subsection{Échantillonnage}
+
+Pour l'encodage PCM, une séquence (frame) contient l'ensemble des valeurs à un instant t dans tous les canaux. Alors, la fréquence de séquencement (frame rate) égale la fréquence d'échantillonage, et la taille de la séquence en octets égale le nombre de canaux multiplié par la taille de l'échantillon (taille d'une valeur du son, en octets).
+
+\section{Java Sound API}
+
+Source : \url{http://java.sun.com/j2se/1.4.2/docs/guide/sound/programmer_guide/index.html}
+
+
+\end{document}

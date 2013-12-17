@@ -1,0 +1,246 @@
+\input{../document_type/document_type}
+\usepackage{url}
+
+% Titre du document qui apparait sur la première page
+\newcommand{\titre}{Plan des tests d'intégration}
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{Applicable}
+\newcommand{\version}{1.2}
+\newcommand{\datedoc}{15/02/2006}
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{08/02/2006}{Vincent MAHE}{Création}{1.0}
+\histo{13/02/2006}{Yvonnick ESNAULT}{Ajout des montages types}{1.1}
+\histo{14/02/2006}{Yvonnick ESNAULT}{Out Direct Corrigé}{1.2}
+\end{historique}
+
+\section{Description}
+
+Ce document décrit les tests généraux à réaliser sur l'application une fois terminés les développements et tests individuels des modules.
+Il recense les configurations à tester, leur résultat attendu et planifie leur déroulement. Il décrit les moyens utilisés pour procéder aux vérifications.
+
+\section{Généralités}
+
+\subsection{Spécificités - Moyens}
+
+Le projet repose sur la production et le traitement d'ondes ramenées à des valeurs numériques.
+Les tests unitaires classiques sont complétement inadaptés au test des valeurs produites par les modules.
+Aussi le test de ces modules passera par un affichage des valeurs produites sur un \emph{oscilloscope}, avec contrôle visuel de la bonne forme des ondes.
+Des tests unitaires classiques seront opérés sur les éléments du \emph{Core} autres que les modules.
+
+\subsection{Réalisation}
+
+Les tests réalisés feront l'objet de compte-rendus dans un document \emph{tests\_integration.tex}.
+Celui-ci précisera :
+\begin{itemize}
+ \item (en titre de section) la personne et la date de la série de tests
+ \item la liste des tests effectués
+ \item le cas échéant, les erreurs corrigées
+\end{itemize}
+\smallskip
+
+\section{Test officiel numéro 1}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [Un VCO :] pitch à 1 kHz, onde ``SawTooth'', sortie sur VCA.In
+ \item [Un VCA :] sortie sur OUTDirect
+ \item [Un LFO :] pitch de 0.5 Hz, sortie sur VCO.pitchIn
+\end{description}
+
+\subsection{Résultat attendu}
+Non précisé par les services officiels.
+
+\section{Test officiel numéro 2}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [Un VCO :] pitch à 1 kHz, onde ???, sortie sur VCF.In
+ \item [Un premier LFO1 :] pitch à 1 Hz, sortie sur VCF.cutOffIn
+ \item [Un VCF :] cutOff de 2 kHz, mode ``LP'', résonance 0, sortie sur ADSR.In
+ \item [Un deuxième LFO2 :] pitch à 0.4 Hz, sortie sur ADSR.Trigger
+ \item [Un ADSRTrigger :] attaque 20 ms, descente 200 ms, retombée 400 ms, volume suspendu à 50 %
+\end{description}
+
+\subsection{Résultat attendu}
+Non précisé par les services officiels.
+
+\section{Test officiel numéro 3}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [Un premier VCO1 :] pitch à 1 kHz, onde ???, sortie sur OUTDirect
+ \item [Un deuxième VCO2 :] pitch à 400 Hz, sortie sur VCO1.pitchIn
+\end{description}
+
+\subsection{Résultat attendu}
+Non précisé par les services officiels.
+
+\section{Test du VCF}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [Un VCO :] pitch à 500 Hz, onde carrée, sortie sur VCF.In
+ \item [Un VCF :] résonance 0, autres paramètres variables, sortie sur Oscillo
+\end{description}
+
+\subsection{Résultat attendu}
+\begin{description}
+ \item [Cut Off à 800 Hz, mode ``LP'' :] doit produire une onde sinusoïdale de même fréquence que l'onde carrée d'origine (filtrage supprimant les harmoniques supérieures).
+ \item [Cut Off à 800 Hz, mode ``HP'' :] doit produire une onde carrée de fréquence double de celle de l'onde d'origine (filtrage supprimant l'onde sinusoïdale de base, en laissant les harmoniques supérieures).
+ \item [Cut Off à 1.2 kHz, mode ``LP'' :] doit produire une composition entre une onde sinusoïdale de fréquence 500 Hz (fréquence de l'onde d'origine) et une onde sinusoïdale de fréquence double (2e harmonique).
+\end{description}
+
+\section{Test ADSRTrigger}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [VCO :] pitch à 1500 Hz, onde libre, sortie sur ADSRTrigger.In
+ \item [ADSRTrigger :] attaque 100 ms, descente 200 ms, retombée 200 ms, suspension à 60 \%, sortie sur Oscillo.In.
+ \item [LFOGate :] pitch à 1 Hz, onde carrée, sortie sur ADSRTrigger.GateIn
+ \item [LFOTrigger :] pitch variable, onde carrée, sortie sur ADSRTrigger.TriggerIn
+\end{description}
+
+\subsection{Résultat attendu}
+\begin{description}
+ \item [Pitch LFOTrigger à 0 :] Gate à 1 Hz => attaque, descente et suspension se succèdent sur 500 ms (d'où une suspension de 200 ms), puis la retombée dure 200 ms, laissant un silence de 300 ms.
+ \item [Pitch LFOTrigger à 0.75 Hz :] une attaque et une retombée se présentent tous les trois Gate (une attaque intermédiaire coïncide avec l'attaque du Gate).
+\end{description}
+
+\section{Test ADHSR}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [VCO :] pitch à 1500 Hz, onde libre, sortie sur ADSRTrigger.In
+ \item [ADHSR :] attaque 100 ms, descente 50 ms, suspension 200 ms, retombée 150 ms, suspension à 60 \%, mode ``boucle'', sortie sur Oscillo.In.
+rIn
+\end{description}
+
+\subsection{Résultat attendu}
+\begin{description}
+ \item [Toutes ondes :] le signal doit présenter la forme d'une enveloppe ADSR classique, telle que celle figurant sur l'icône du bouton correspondant.
+\end{description}
+
+\section{Test du VCA}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [VCO :] pitch et onde quelconques, sortie sur VCA.In
+ \item [VCA :] volume variable, sortie sur Oscillo.In.
+\end{description}
+
+\subsection{Résultat attendu}
+\begin{description}
+ \item [Volume à 50 \% :] la hauteur du signal doit être la moitié de celle du signl d'origine.
+ \item [Volume à 120 \% :] le signal doit être  écrêté à +5 et -5 V.
+\end{description}
+
+\section{Boucle VCO}
+Montage évoqué en réunion de suivi des projets.
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [VCO1 :] onde sinusoïdale, pitch à 1 kHz, sortie sur VCO2.pitchIn.
+ \item [VCO2 :] onde sinusoïdale, pitch à 1 kHz, sortie sur VCO1.pitchIn et sur Oscillo.in.
+\end{description}
+
+\subsection{Résultat attendu}
+\begin{description}
+ \item le signal produit doit être une sinusoïdale haute fréquence enveloppée dans une sinusoïdale basse fréquence.
+\end{description}
+
+\section{Mixer}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [VCO1 :] pitch à 500 Hz, sortie sur Mixer.In1
+ \item [VCO2 :] pitch à 1000 Hz, sortie sur Mixer.In2
+ \item [VCO3 :] pitch à 1500 Hz, sortie sur Mixer.In3
+ \item [Mixer :] sortie sur Oscillo
+\end{description}
+
+\subsection{Résultat attendu}
+\begin{description}
+ \item [Vol1 100 \%, vol2 50 \%, vol3 33 \% :] le signal total doit tenir dans la plage des +5 V / -  V. Il doit être composé d'une onde ayant trois crans d'égale hauteur.
+ \item [Vol1 100 \%, vol2 100 \%, vol3 100 \% :] le signal total doit tenir dans la plage des +5 V / -  V. Il doit être composé de trois pics dont les hauteurs sont dans un rapport 1, 3, 5.
+ \item [Vol1 100 \%, vol2 100 \%, vol3 0 \% :] le signal total doit tenir dans la plage des +5 V / -  V. Il doit être composé de deux pics dont les hauteurs sont dans un rapport 1 à 3.
+\end{description}
+
+
+\section{Montage Pompier}
+
+\subsection{Modules et connections}
+Modules :
+\begin{description}
+ \item [LFO :] signal carré à 1hz,
+ \item [VCA :] 5\%
+ \item [VCO :] pitch à 440 hz, signal triangulaire.
+\end{description}
+
+\subsection{Résultat attendu}
+\begin{description}
+ \item Le montage soit produire une sirène de pompier.
+\end{description}
+
+\begin{figure}[!htpb]
+  \begin{center}
+   	\includegraphics{img/test_pompier.png}
+    \caption{Montage de la sirène de pompier}
+  \end{center}
+\end{figure}
+
+\subsection{Résultats obtenus}
+\begin{description}
+ \item Avec le module OUTFile, le fichier son généré est correct.
+ \item Avec le module OUT Direct, le son produit est craquellé et se décale. \emph{Corrigé le 14/02}
+\end{description}
+
+
+\section{Montage Sonnerie de téléphone occupé}
+
+\subsection{Modules et connections}
+Modules à voir sur la copie d'écran.
+
+\begin{figure}[!htpb]
+  \begin{center}
+   	\includegraphics{img/test_telephone_occupe.png}
+    \caption{Montage du téléphone occupé}
+  \end{center}
+\end{figure}
+
+\subsection{Résultat attendu}
+\begin{description}
+ \item Le montage soit produire une sonnerie de téléphone occupé.
+\end{description}
+
+\subsection{Résultats obtenus}
+\begin{description}
+ \item Avec le module OUTFile, le fichier son généré est correct mais avec un 
+ petit craquement à la huitième sonnerie,
+ \item Avec le module OUT Direct, le son produit est craquellé et se décale. \emph{Corrigé le 14/02}
+\end{description}
+
+% Fin du document
+\end{document}

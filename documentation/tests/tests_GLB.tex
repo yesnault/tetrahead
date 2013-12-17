@@ -1,0 +1,89 @@
+\input{../document_type/document_type}
+\usepackage{url}
+
+% Titre du document qui apparait sur la première page
+\newcommand{\titre}{Tests : Modules}
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{En progression}
+\newcommand{\version}{1.0}
+\newcommand{\datedoc}{24/01/2006}
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{30/01/2006}{Vincent MAHE}{Création}{1.0}
+\histo{11/02/2006}{Vincent MAHE}{Tests}{1.0}
+\histo{12/02/2006}{Vincent MAHE}{Tests (suite...)}{1.0}
+\histo{13/02/2006}{Yvonnick ESNAULT}{Relecture, Oscilloscope}{1.1}
+\end{historique}
+
+\section{Description}
+
+Ce document rassemble les compte-rendus de l'ensemble des tests réalisés par Gaëtan Le Brun sur l'application.
+\smallskip
+Un compte-rendu type comporte :
+\begin{itemize}
+ \item (en titre de section) la date de la série de tests
+ \item la liste des tests effectués
+ \item le cas échéant, les erreurs corrigées
+\end{itemize}
+
+\section{09/02/06}
+
+\subsection{Test de l'interface}
+
+\subsubsection{Barre de boutons du haut}
+\begin{description}
+\item[Comportement des boutons] : activation/désactivation des boutons en fonction de l'état du synthétiseur.
+\item[remède proposé] : désactiver le bouton play et reset, activer le bouton 
+stop on appuie sur play ; activer le bouton play et le bouton reset, désactiver 
+le bouton stop quand on appuie sur stop.
+\item[statut] : **** FIXME ****
+ \end{description}
+
+\subsubsection{Interactions}
+\begin{description}
+\item[manque de rétroactions] : pas d'indications lors de la connexion d'un port de sortie à un port d'entrée.
+\item[remède proposé ] : ajouter des rétroactions au niveau des classes gérant le drag'n drop sur les connecteurs.
+\item[statut] : **** FIXME ****
+\end{description}
+
+\section{09/02/06}
+
+\subsection{Tests unitaires}
+\begin{description}
+\item[test de ParameterValue sous JUnit et relecture du code] : pas d'erreur détectée.
+\item[statut] : **** FIXED ****
+\end{description}
+
+\medskip
+
+\begin{description}
+\item[test de DiscreteParameter sous JUnit] : incohérence détectée lorsque l'on utilise next et previous, l'iterateur sur la 
+collection n'est pas adapté pour parcourir une collection dans les 2 sens.
+\item[remède proposé] : utilisation de tableau plutôt que d'une collection et gestion d'un index interne.
+\item[statut] : **** FIXED ****
+\end{description}
+
+\medskip
+
+\begin{description}
+\item[test de ContinuousParameter sous JUnit] : incohérence détectée lorsque 
+l'on utilise setRate(), le calcul du pourcentage n'est pas valide.
+\item[remède proposé] : correction du calcul.
+\item[statut] : **** FIXED ****
+\end{description}
+
+\end{document}

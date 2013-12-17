@@ -1,0 +1,227 @@
+\newpage
+\section{Description des modules}
+\label{secDescModules}
+
+\subsection{Oscillateurs}
+
+\subsubsection{VCO}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_vco.png}
+ \caption{Le module VCO}
+ \end{center}
+\end{figure}
+
+Le VCO (\textbf{V}oltage \textbf{C}ontrolled \textbf{O}scillator) permet de 
+générer un signal, c'est l'élément de base dans un montage. Il est constitué de 
+deux boutons, respectivement de gauche à droite : Pitch et Forme d'onde. Le 
+Picth permet de régler la fréquence de l'onde générée. Par exemple, pour avoir 
+la note LA de base, il suffit de mettre la valeur à 440 Hz.
+
+Le second bouton permet de modifier la forme d'onde générée qui peut être de la forme : 
+
+\begin{description}
+\item [Onde Carrée :] \includegraphics[width=2cm]{images/Square.png}
+
+\item [Onde Sinusoïdale :] \includegraphics[width=2cm]{images/Sine.png}
+
+\item [Onde Dents de scie :] \includegraphics[width=2cm]{images/Saw_tooth.png}
+
+\item [Onde Factory Roof :] \includegraphics[width=2cm]{images/Factory_roof.png}
+
+\item [Onde Triangulaire :] \includegraphics[width=2cm]{images/Triangle.png}
+
+\end{description}
+
+Le VCO possède également un port d'entrée, nommé Pitch-IN. Suivant la valeur 
+du signal reçu, il permet d'ajouter ou de supprimer des harmoniques au signal 
+généré. C'est généralement un LFO qui est banché à ce port.
+
+\subsubsection{LFO}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_lfo.png}
+ \caption{Le module LFO}
+ \end{center}
+\end{figure}
+
+Le LFO (\textbf{L}ow \textbf{F}requency \textbf{O}scillator) permet de générer 
+un signal à base fréquence. Il est constitué de deux boutons, respectivement de 
+gauche à droite : Pitch et Forme d'onde. Le Picth permet de régler la fréquence 
+de l'onde générée, de 0 à 20 Hz. Généralement, le LFO est réglé à une fréquence 
+très basse (entre 0.1 et quelques Hz).
+
+Le second bouton permet de modifier la forme d'onde générée, voir la 
+documentation sur le VCO à ce sujet. %\newpage
+
+\subsection{Enveloppes}
+
+\info{L'ADHSR et l'ADSR Trigger décrits ci-dessous ne pas des générateurs 
+d'enveloppe proprement dit. Ils possèdent tous les deux un port d'entrée, c'est 
+sur le signal reçu sur ce port d'entrée qu'une enveloppe va être produite en 
+sortie.}
+
+\subsubsection{ADHSR}
+
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[height=2cm]{images/module_adhsr.png}
+ \caption{Le module ADHSR}
+ \end{center}
+\end{figure}
+
+ADHSR : \textbf{A}ttack, \textbf{D}ecay, \textbf{H}old, \textbf{S}ustain, 
+\textbf{R}elease.
+
+\subsubsection{ADSR Trigger}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_adsrtrigger.png}
+ \caption{Le module ADSR Trigger}
+ \end{center}
+\end{figure}
+
+L'ADSR Trigger possède plusieurs comportements suivant les valeurs qu'il reçoit
+sur ces ports d'entrée \code{gate} et \code{trigger}.  
+
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[height=5cm]{images/ADSR_1.png}
+ \caption{Enveloppe classique : une gate sans trigger.}
+ \end{center}
+\end{figure}
+
+
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[height=5cm]{images/ADSR_2.png}
+ \caption{La gate se termine avant le déclenchement du Decay, le Release se déclenche.}
+ \end{center}
+\end{figure}
+
+
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[height=5cm]{images/ADSR_3.png}
+ \caption{Utilisation d'un trigger au milieu d'une gate : génération d'une nouvelle attaque}
+ \end{center}
+\end{figure}
+
+
+\begin{figure}[!h]
+ \begin{center}
+ \includegraphics[height=5cm]{images/ADSR_4.png}
+ \caption{Utilisation de triggers sans gate : aucun Decay n'est produit.}
+ \end{center}
+\end{figure}
+
+
+\newpage
+\subsection{Filtres}
+
+\subsubsection{VCF}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_vcf.png}
+ \caption{Le VCF}
+ \end{center}
+\end{figure}
+
+Le VCF (\textbf{V}oltage \textbf{C}ontrolled \textbf{F}ilter) permet 
+d'appliquer soit un filtre \emph{Passe-Haut}, soit un filtre 
+\emph{Passe-Bas} sur le signal reçu sur le port d'entrée.
+
+En complément du port d'entrée IN, ce module possède un second port d'entrée : 
+\emph{Cut-off In}. Le signal reçu sur cette entrée permet de donner la 
+fréquence de coupure du filtre. Lorsque l'entrée \emph{Cut-Off In} et le 
+bouton \emph{Cut Off} sont positionnés, c'est la moyenne des deux qui est 
+appliquée en tant que fréquence de coupure.
+
+Le bouton \emph{Résonnance} permet d'ajouter un effet d'écho au signal filtré.
+
+\subsubsection{Mixer}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_mixer.png}
+ \caption{Le mixer}
+ \end{center}
+\end{figure}
+
+Le mixer permet de mélanger plusieurs signaux, avec pour chaque signal la 
+possibilité de régler son volume. Il n'est pas obligatoire de brancher tous les 
+ports d'entrée du mixer.
+
+\info{Un mixer branché avec un seul port d'entrée, réglé avec un volume entre 0 
+et 100, à la même comportement qu'un VCA avec un gain réglé avec la même valeur 
+que le volume.}
+
+\subsubsection{VCA}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_vca.png}
+ \caption{Le module VCA}
+ \end{center}
+\end{figure}
+
+Le VCA (\textbf{V}oltage \textbf{C}ontrolled \textbf{A}mplifier) permet 
+d'amplifier un signal le signal reçu sur le port d'entrée. Il est généralement 
+utilisé à l'entrée ou à la sortie d'un filtre.
+
+\subsection{Sorties}
+
+\subsubsection{OUT Direct}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_outdirect.png}
+ \caption{Le module OUTDirect}
+ \end{center}
+\end{figure}
+
+Le module OUT Direct possède un bouton ainsi qu'un port d'entrée. Il permet de 
+faire sortir sur les enceintes de l'ordinateur le signal reçu sur son port 
+d'entrée. Il faut s'assurer que le bouton soit positionné sur l'état ON pour 
+entendre le son.
+
+\attention{ Remarque : il n'est pas possible d'avoir deux modules OUT Direct à l'état ON, 
+lorsque le synthétiseur est en cours de jeu.}
+
+\subsubsection{OUTFile}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_outfile.png}
+ \caption{Le module OUTFile}
+ \end{center}
+\end{figure}
+
+Le module OUT File permet de générer un fichier au format .wav. Le contenu de 
+ce fichier correspond au signal qu'il reçoit sur son port d'entrée.
+
+Par défaut, le fichier généré est placé dans le répertoire \code{sorties/} et 
+possède un nom tel que : sortie\_yyyymmdd\_hhmmssSS.wav où y est l'année, m le 
+mois, d le jour, h l'heure etc \ldots
+
+\subsubsection{Oscilloscope}
+
+\begin{figure}[!h]
+ \begin{center}
+\includegraphics[height=2cm]{images/module_oscilloscope.png}
+ \caption{Le module Oscilloscope}
+ \end{center}
+\end{figure}
+
+L'oscilloscope permet de visualiser le signal reçu sur le port d'entrée. 
+L'icône située en dessous du graphique permet de stopper le défilement du 
+signal, ce qui est très utile lorsque la fréquence du signal est très élevée. 
+Un nouveau clic sur l'icône fait repartir l'affichage.
+
+\attention{Il n'est pas recommandé de faire fonctionner plus de trois 
+oscillateurs sur un même montage. Ce module est gourmand en ressource 
+processeur lorsqu'il n'est pas en pause.} \newpage

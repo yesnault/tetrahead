@@ -1,0 +1,157 @@
+\input{../document_type/document_type}
+\usepackage{url}
+
+% Titre du document qui apparait sur la première page
+\newcommand{\titre}{Tests : Modules}
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{En progression}
+\newcommand{\version}{1.0}
+\newcommand{\datedoc}{24/01/2006}
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{30/01/2006}{Vincent MAHE}{Création}{1.0}
+\histo{11/02/2006}{Vincent MAHE}{Tests}{1.0}
+\histo{12/02/2006}{Vincent MAHE}{Tests (suite...)}{1.0}
+\histo{13/02/2006}{Yvonnick ESNAULT}{Relecture, Oscilloscope}{1.1}
+\end{historique}
+
+\section{Description}
+
+Ce document rassemble les compte-rendus de l'ensemble des tests réalisés par Vincent MAHÉ sur l'application.
+\smallskip
+Un compte-rendu type comporte :
+\begin{itemize}
+ \item (en titre de section) la date de la série de tests
+ \item la liste des tests effectués
+ \item le cas échéant, les erreurs corrigées
+\end{itemize}
+
+\section{29/01/2006}
+
+\subsection{Test du programme TestsCompute, avec un VCO comme exemple}
+Erreurs sur \emph{Module} : les HashTable des ports et des paramètres n'étaient pas initialisées (code produit par Omondo). Corrigé.
+
+\subsection{Test du module VCO, avec le programme TestsCompute}
+Erreurs sur \emph{VCO} : la fonction d'ondes sinusoïdale rendait 0. Corrigé (division d'\emph{entiers} remplacée par division à numérateur \emph{double}).
+
+
+\section{Défauts de l'interface}
+
+\subsection{Barre des modules}
+\begin{description}
+ \item[Premier DnD :] lors du premier chargement d'un module depuis la barre vers l'espace de performance, pas d'affichage (sans doute lié au délai d'accès disque, suspendu en mode batterie). Problème pour chacun des différents modules.
+ \item[remède proposé :] précharger les images en mémoire dans la factory (voire les modules eux-mêmes) pendant le splashscreen (fenêtre de chargement affichant les tâches réalisées), puis les fournir lors du DnD via la factory. Envisager un clonage des modules s'ils sont pré-créés au démarrage.
+ \item[statut :] **** FIXME ****
+
+\end{description}
+
+\subsection{Affichages}
+\begin{description}
+ \item[Caractères manquants :] les caractères accentués des fenêtres, boîtes de dialogues, bulles et messages d'erreur sont tous absents (voir About et suppression d'un connecteur en cours d'exécution).
+ \item[remède proposé :] à priori, le paramétrage d'Eclipse en ISO-8859-1 résout le problème.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[Texture brouillée :] la partie gauche de la texture est défectueuse et ne correspond pas à l'aspect métal brosssé du reste.
+ \item[remède proposé :] supprimer la partie défectueuse et redimensionner le reste à la taille d'origine.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[Pointeur bouton :] il n'est pas \emph{propre} et se voit difficilement.
+ \item[remède proposé :] mettre un rond du jaune des views des paramètres.
+ \item[statut :] **** FIXME ****
+
+\end{description}
+
+
+\subsection{Interactions}
+\begin{description}
+ \item[Unités bloquantes :] les unités bloquent la saisie manuelle. Par ailleurs, le nombre existant doit être présélectionné pour ne pas perturber la saisie de la nouvelle valeur. La saisie ne suffit pas à faire prendre en compte la nouvelle valeur ; il faut en plus faire \emph{Entrée} pour qu'elle soit reconnue par le traitement, ce qui enlève beaucoup d'intérêt à la navigation par tabulation.
+ \item[remède proposé :] lors de l'activation de la zone de texte (clic dans la zone ou tabulation entrante), sélectionner automatiquement la totalité du texte contenu. Lors de la sortie de la zone (clic ailleurs, touche \emph{Entrée} ou tabulation sortante), valider la nouvelle valeur (utiliser \emph{gotFocus} et \emph{lostFocus} ou leur équivalent Java).
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[DnD sur ports d'entrée :] le DnD depuis un port d'entrée ne fonctionne pas. Il s'agit d'un choix fonctionnel, certes, mais rien n'indique à l'utilisateur qu'il ne peut le faire, sauf pour lui à s'immobiliser sur le port et ainsi obtenir l'information par la bulle d'aide.
+ \item[remède proposé :] faire apparaître un cadre rouge lors d'un début de DnD sur un port d'entrée.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[DnD sur ports interdits :] lors d'un DnD d'un port de sortie vers un autre port de sortie, le connecteur ne se crée pas, ... Cf. ''fonctionnalité'' ci-dessus.
+ \item[remède proposé :] le même.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[2nd DnD sur port sortie :] un deuxième DnD depuis un port de sortie déjà connecté ne peut se faire depuis le centre du port et doit partir d'un côté du port.
+ \item[remède proposé :] mettre un carré bleu au survol du port de sortie pour signaler que le DnD est possible (et l'enlever quand on est sur le connecteur existant, bien entendu).
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[DnD sur connecteurs :] le DnD n'est pas possible sur un connecteur déjà créé. Celà limite les possibilités de modification en cours d'utilisation.
+ \item[remède proposé :] il serait bien d'autoriser le déplacement d'un connecteur créé de façon erronée, accompagné d'un cercle jaune indiquant cette possibilité lors du survol du pointeur. L'ajout et la suppression de connecteurs et de modules en cours d'utilisation devrait être autorisé.
+ \item[statut déplacement :] **** FIXME ****
+ \item[statut modifications à chaud :] ** TODO **
+
+
+\end{description}
+
+\section{Défauts du coeur}
+
+\subsection{Bases}
+
+\begin{description}
+ \item[VCO seul :] petites bavures toutes les quelques secondes. Testé uniquement avec le module OUT Direct.
+ \item[remède proposé :] nature inconnue du problème.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[VCO + VCF Param :] trois grosses bavures au départ de l'exécution. Testé uniquement avec le module OUT Direct.
+ \item[remède proposé :] nature inconnue du problème.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[VCO + ADHSR :] à plusieurs reprises, ils ne se sont pas arrêtés du premier coup. Il a fallu relancer l'exécution puis cliquer sur le bouton arrêter. Testé uniquement avec le module OUT Direct.
+ \item[remède proposé :] nature inconnue du problème.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[VCO + ADSR trigger / LFO + Oscillo inactif :] LFO carré à 0.5 Hz sur gateIn, VCO sinus à 1 kHz, attaque 100 ms, descente 50 ms, retombée 400 ms => résultat baveux, avec son différent d'un moment à un autre (cloche, buzzeur, piano...). Moins marqué en l'absence d'oscillo mais subsiste quand même. Problème identique avec le LFO branché sur triggerIn. Testé uniquement avec le module OUT Direct.
+ \item[remède proposé :] changements de son sans doute en partie liés à la phase entre l'onde et l'attaque (suivant que l'attaque commence quand l'onde est à +5V, 0, -5V).
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[VCO + ADSR trigger / LFO :] LFO carré à 0.5 Hz sur triggerIn ou gateIn, VCO sinus à 1 kHz, attaque 100 ms, descente 50 ms, retombée 400 ms avec une fréquence d'échantillonnage à 22050 => fonctionnement normal, à l'exception de petites bavures qui sont surtout audibles quand elles interrompent une retombée (effet de doublon de la note alors). Testé uniquement avec le module OUT Direct.
+ \item[remède proposé :] interruption due vraisemblablement au transfert d'un nouveau tableau à la sortie son.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[VCO + ADSR trigger / LFO :] LFO carré à 1 Hz sur gateIn + pitchIn, VCO sinus à 1 kHz, attaque 100 ms, descente 50 ms, retombée 200 ms avec une fréquence d'échantillonnage à 22050 => défauts de tempo aléatoires, dont au démarrage (notes parfois très proches ou trop éloignées). Testé uniquement avec le module OUT Direct.
+ \item[remède proposé :] défauts dus vraisemblablement au transfert d'un nouveau tableau à la sortie son.
+ \item[statut :] **** FIXME ****
+\medskip
+
+ \item[Oscilloscope] Le module oscilloscope occupe beaucoup de ressource CPU (50\% d'un 2.4 Ghz).
+ \item[remède proposé :] Possibilité d'amélioré le module Oscilloscope en le faisant travailler avec un buffer.
+ Cela éviterait de devoir mettre à jour l'affichage à tour les tours d'horloge.
+ \item[statut :] **** FIXME ****
+
+\end{description}
+
+
+
+
+% Fin du document
+\end{document}

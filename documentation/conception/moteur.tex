@@ -1,0 +1,410 @@
+\label{moteur audio}
+\subsection{Points Clés}
+\begin{itemize}
+  \item La communication entre les modules doit se faire valeur par valeur et 
+  non par le biais d'un buffer,
+  \item La valeur transmise est un flottant ayant une valeur entre -5 et +5, correspondant à la tension électrique utilisée dans un synthétiseur électronique réel,
+  \item La classe \code{Synthetizer} comporte un ensemble de modules et lorsqu'il est 
+  en cours de jeu, il appelle la méthode \code{compute()} sur tous les modules, 
+  peu importe leur ordre.
+\end{itemize}
+
+\subsection{Synthétiseur et séquenceur}
+Le rôle de l'objet \code{Synthetizer} est d'appeler la méthode \code{compute()}
+de chaque module qu'il possède, lorsque l'utilisateur le passe dans l'état \code{playing}.
+
+Les principales méthodes que l'on doit retrouver dans cet objet sont : 
+\begin{itemize}
+  \item \code{addModule(IModule)}
+  \item \code{playSynthetizer()}
+  \item \code{stopSynthetizer()}
+\end{itemize}
+
+Le Synthetizer gère également la fréquence d'échantillonage\index{Frequence 
+d'echantillonage@Fréquence d'échantillonage} par défaut, que chaque module doit 
+connaître.
+
+Lorsque le synthétiseur est en cours de marche, il ne doit pas bloquer l'interface
+graphique. Il faut donc le lancer dans un \code{Thread} et définir une méthode
+\code{run()}. Cette méthode contiendra le séquenceur qui sera tel que : 
+
+\begin{verbatim}
+    TantQue etat == marche
+      Pour Tous les modules m dans listeModules
+        m.compute()
+      FinPour  
+    FinTantQue
+\end{verbatim}
+
+\subsubsection{Boucle dans le montage}
+Le séquenceur lance les méthodes \code{compute()} de ses modules dans l'ordre où ils ont
+été rajoutés sur le montage. Il n'y a pas de gain visible à apporter un 
+ordre dans les modules.
+Cette méthode permet d'effectuer des boucles dans le montage de manière
+transparente, chaque module lisant la valeur de chaque port d'entrée, traitant puis
+écrivant la valeur sur le port de sortie. Si son port de sortie est connecté sur 
+le port d'entrée (ce qui est possible), il n'y a pas de problème a priori.
+
+\subsection{Description des modules}
+\index{Module!Description}
+Tous les modules doivent étendre une classe abstraite : \code{Module}. Cette 
+classe implémente une interface \code{IModule}. Les détails des méthodes et des 
+attributs sont visibles dans les diagrammes UML de ce chapitre.
+
+Globalement, cette classe possède un ensemble de ports d'entrées, un port de 
+sortie, un ensemble de paramètres discrets, un ensemble de paramètres continus. 
+Chaque attribut peut être NULL.
+
+Les ports d'entrées ainsi que les paramètres discrets et continus sont gérés 
+par le biais de collections \code{HashMap}, pour plus de performance et pour un 
+accès direct (nécessité par certains algorithmes à chaque exécution de 
+\code{compute}).
+
+\subsubsection{LFO}
+Un \emph{Low Frequency Oscillator} génère une onde de basse fréquence, pouvant 
+être utilisée comme paramètre d'entrée dans d'autres modules.
+
+Le signal carré est généralement l'onde choisie pour déclencher un top (dans 
+l'ADSR Trigger par exemple).
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : NULL.
+\item Port OUT : 1.
+\item Paramètre(s) continu(s): pitch avec une plage de 0 à 20 Hz.
+\item Paramètre(s) discret(s): Forme du signal généré : carré, sinusoïdal, dent 
+de scie (+ inverse), triangle.
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!LFO}
+Les différents algorithmes nécessaires à l'obtention des profils d'ondes 
+demandés ont été conçus ex nihilo par l'équipe TetraHead en analysant 
+mathématiquement le résultat souhaité pour les $n$ échantillons d'une période 
+d'onde donnée. la valeur $n~=~freqEch~/~pitch$ où $freqEch$ désigne la 
+fréquence d'échantillonnage \index{Frequence d'echantillonage@Fréquence 
+d'échantillonage}du signal (choisie au niveau du synthétiseur) et $pitch$ la 
+fréquence désirée pour le signal (440 Hz pour un \emph{LA}).
+\begin{description}
+\index{Onde}
+ \item[Onde carrée :] le signal vaut $+5$ (volts) pour $n/2$ valeurs puis $-5$ 
+ pour $n/2$ valeurs.
+ \item[Onde toit d'usine :] le signal part de $-5$ au début de la période puis 
+ croît de $10/n$ à chaque échantillon, pour finir à $+5$ en fin de période
+ \item[Onde dents de scie :] le signal part de $+5$ au début de la période puis 
+ décroît de $10/n$ à chaque échantillon, pour finir à $-5$ en fin de période
+ \item[Onde triangulaire :] le signal part de $-5$ au début de la période puis 
+ croît de $5/n$ à chaque échantillon, jusqu'à atteindre $+5$ au $n/2$ 
+ échantillon. Il décroît ensuite au même rythme, pour finir à $-5$ en fin de 
+ période.
+ \item[Onde sinusoïdale :] revient à calculer la hauteur atteinte par un rayon 
+ de longueur $1$ sur un cercle en fonction d'un incrément de la valeur 
+ horizontale allant de $-1$ à $+1$ pour un indice $i$ allant de $0$ à $n$. 
+ La hauteur se calcule par la formule suivante : $5\cdot\sin(2\cdot i\cdot\pi/n))$.
+\end{description} 
+
+\subsubsection{VCO}
+Un \emph{Voltage Controlled Oscillator} est similaire au LFO, mais avec un port 
+d'entrée Pitch-IN\index{Pitch-In} (pour brancher un LFO par exemple) et une 
+plage de valeur de Pitch\index{Pitch} dans les fréquences audibles.
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 1 pitch-in.
+\item Port OUT : 1.
+\item Paramètre(s) continu(s): Pitch en hertz. Valeur minimum : 20 Hz. Valeur 
+maximum : 3520 Hz.
+\item Paramètre(s) discret(s): similaire au LFO.
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!VCO}
+Les algorithmes de calcul des ondes, dans le \code{LFO}, ont été séparés de la 
+méthode \code{compute()}, cette dernière ne faisant plus que le calcul du 
+nombre d'échantillons par période($n$). Ainsi, le \code{VCO} réutilise les 
+calculs d'ondes du \code{LFO}, dont il hérite.
+
+\subsubsection{VCF}
+Les \emph{Voltage Controlled Filters} \index{Filtre} réalisent un affinage du 
+signal généré par les VCO en lui soustrayant soit les harmoniques 
+\index{Harmonique} basses (mode \emph{High Pass}), soit les harmoniques hautes 
+(mode \emph{LowPass}), la fréquence de décision étant donnée via la valeur de 
+CutOff. Ils sont fondamentaux en synthèse soustractive, qui est le principe 
+utilisé dans le projet.
+
+Un premier VCF a seulement un CutOff\index{CutOff} sur port d'entrée, tandis 
+qu'un second dispose en plus d'un paramètre CutOff réglable par l'utilisateur. 
+Dans ce dernier cas, une moyenne des CutOff du port d'entrée et du paramètre 
+est réalisée (sauf si le port d'entrée n'est pas connecté).
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 2 : 1 IN et un Cut Off-IN.
+\item Port OUT : 1.
+\item Paramètre(s) continu(s): 2. Cut Off en Hz et résonnance en \%.
+\item Paramètre(s) discret(s): 1. Type de filtre. Passe-bas (Low Pass), ou 
+Passe-haut (High Pass)
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!VCF}
+Il ne nous était pas possible de concevoir des algorithmes de filtrage sans 
+connaître davantage de la science de traitement du signal. Aussi avons-nous eu 
+recours à différents algorithmes mis à disposition sur Internet par des 
+spécialistes à l'usage de non spécialistes.
+
+Après test de plusieurs des algorithmes proposés, nous avons retenu celui 
+fourni par \cite{tarrabia}.
+%Patrice TARRABIA sur la page 
+%\url{http://www.musicdsp.org/archive.php?classid=3#38}.
+
+Cet algorithme assure un filtrage correct tant en \index{Passe-bas} Passe-bas 
+qu'en \index{Passe-haut}Passe-haut, en s'appuyant sur le signal entrant et les 
+deux précédents signaux entrants et sortants.
+
+Pour plus d'informations sur ces algorithmes, se reporter au document 
+\emph{filtres.pdf} du répertoire \emph{algorithmes}.
+
+\subsubsection{VCA}
+Le \emph{Voltage Controlled Amplifier} permet de moduler l'amplitude du signal 
+fourni en entrée, en l'atténuant ou en l'amplifiant. Le module VCA 
+ est seulement contrôlé par l'utilisateur, via un paramètre 
+continu modulant l'amplitude entre 0 et 100 \%, car les modules d'enveloppes 
+réalisent elles mêmes la modulation du signal (contrairement à d'autres 
+synthétiseurs).
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 1 IN.
+\item Port OUT : 1.
+\item Paramètre(s) continu(s): 1. Volume, de 0 à 200\%. Avec un volume à 50\%, 
+il y a une atténuation de 6db.
+\item Paramètre(s) discret(s): NULL.
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!VCA}
+Le module pondère simplement l'échantillon en entrée par le c\oe fficient défini 
+par l'utilisateur sur le paramètre \code{volume}, avec la formule suivante : 
+$sigOut\,=\,sigIn\,\cdot\,volume\,/\,100$.
+
+\subsubsection{ADHSR}
+Les enveloppes prennent un signal en entrée et modulent son amplitude dans le 
+temps de façon à obtenir un profil général de l'onde conforme aux attentes de 
+l'utilisateur, avec un début en pointe formé d'une montée rapide 
+(Attack\index{Attack}) suivie d'une chute (Decay\index{Decay}) jusqu'à un 
+niveau sonore moyen (le volume de Suspend\index{Suspend}) maintenu pendant une 
+certaine durée (Hold\index{Hold}), pour finir doucement à zéro (Release).
+
+N'étant pas commandée par un signal, l'enveloppe ADHSR
+fonctionne en boucle, redémarrant un cycle à la fin du précédent, ou se coupant 
+après une exécution de l'enveloppe.
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 1 IN.
+\item Port OUT : 1.
+\item Paramètre(s) continu(s): 5. Attaque (ms), Descente 
+(ms), H Suspens (ms), Sustain Volume (\%), Retombée (ms)
+\item Paramètre(s) discret(s): 1. Refaire : en boucle, ou unique.
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!ADHSR}
+L'algorithme nécessaire à l'obtention du profil d'enveloppe\index{Enveloppe} 
+d'onde demandé a été conçu ex nihilo par l'équipe TetraHead en analysant 
+mathématiquement le résultat souhaité sur les $n$ échantillons pour une durée 
+donnée. La durée des différentes périodes (\emph{Attack, Decay, Hold, Release}) 
+est transformée en nombre d'échantillons par la formule simple 
+$n\,=\,delai\,\cdot\,freqEch\,/\,1000$ où $freqEch$ désigne la fréquence 
+d'échantillonnage du signal en Hz (choisie au niveau du synthétiseur) et 
+$delai$ la durée désirée en millisecondes.
+
+Les valeurs lors des montées et descentes sont calculées de la même façon que 
+pour les ondes triangulaires du \code{LFO}.
+
+\subsubsection{ADSR Trigger}
+Cette enveloppe fournit le même service que l'enveloppe ADHSR ci-dessus, à la 
+seule différence qu'ici le début de l'attaque et le début de la retombée sont 
+commandés par un signal en entrée à +5 V.
+
+Un signal carré sur le port d'entrée \emph{Gate} commande l'attaque (suivie de la 
+descente) quand il passe à +5 V, puis le volume Sustain est maintenu jusqu'au 
+passage à -5 V qui commande la retombée.
+
+Un signal quelconque sur le port d'entrée \emph{Trigger} commande une attaque 
+aussitôt suivie d'une retombée au passage à +5 V. Il n'y a ni descente ni 
+suspension.
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 3. 1 IN, 1 Gate, 1 Trigger.
+\item Port OUT : 1.
+\item Paramètre(s) continu(s): 5. Attaque (ms), Descente 
+(ms), Sustain Volume (\%), Retombée (ms)
+\item Paramètre(s) discret(s): 1. Refaire : en boucle, ou unique.
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!ADSR Trigger}
+Ce module réutilise les algorithmes du ADHSR ci-dessus.
+
+\subsubsection{Mixer}
+Le \emph{Mixer} prend jusqu'à 4 signaux en entrée et autant de paramètres de 
+volume et réalise une fusion de ces signaux avec un rapport en fonction de leur 
+volume respectif.
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 4.
+\item Port OUT : 1.
+\item Paramètre(s) continu(s): un paramètre continu à rattacher avec chaque port 
+IN, soit 4 en tout.
+\item Paramètre(s) discret(s): Aucun
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!Mixer}
+Le module réalise une moyenne arithmétique des valeurs sur les entrées 
+connectées pondérée par les volumes correspondants.
+
+\subsubsection{OUT File}
+Le module \emph{OUT File} prend le signal final composite du synthétiseur et 
+l'enregistre dans un fichier son de type \code{.WAV}. Le fichier porte la date et 
+l'heure d'enregistrement.
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 1 IN.
+\item Port OUT : NULL.
+\item Paramètre(s) continu(s): NULL.
+\item Paramètre(s) discret(s): 1. On, Off. Le passage de On à Off en cours de 
+lecture écrit le fichier wav du signal reçu dans le répertoire 
+sorties/wav\_temp/. Le nom du fichier est donné dans la console. Modifier ce 
+nom de fichier par l'interface n'est pas prévu dans le planning initial.
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!OUT File}
+Ce module utilise un objet \code{AudioInputStream} de l'API Sound du 
+package \code{javax.sound.sampled}. L'écriture dans un fichier wav s'effectue 
+d'après la javadoc, tel que : \code{AudioSystem.write(audioInputStream, 
+AudioFileFormat.Type.WAVE,new File("myFile.wav")}. L'objet 
+\code{AudioInputStream} doit être paramétré avec un tableau de données et un 
+format de son (fréquence\dots)
+
+\subsubsection{OUT Direct}
+Le module \emph{OUT Direct} prend le signal final composite (à +5 V) du 
+synthétiseur et le fait jouer par le périphérique sonore de l'ordinateur (carte 
+son), à l'aide des couches matérielles Java Sound. Un interrupteur On/Off 
+permet de couper ou non la sortie sonore.
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 1 IN.
+\item Port OUT : NULL.
+\item Paramètre(s) continu(s): NULL.
+\item Paramètre(s) discret(s): 1. On, Off. On : sortie du son sur les 
+enceintes, en temps réel.
+\item Bouton(s) : 1. \emph{Capturer}.
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!OUT Direct}
+La sortie du son sur les enceintes doit être un \emph{programme} indépendant
+de la synthèse. Un thread devra donc être utilisé pour l'écriture des données
+dans le système de son.
+Des informations sur l'API Java Sound sont disponibles à l'adresse : 
+\cite{javasound}
+
+
+\subsubsection{Oscilloscope}
+L'oscilloscope permet de visualiser la nature du signal reçu dans le port 
+d'entrée. Une pause doit être permise lors de la lecture, pour capturer une 
+image à un instant $t$.
+
+Résumé de la composition :
+\begin{itemize}
+\item Port(s) IN : 1 IN.
+\item Port OUT : NULL.
+\item Paramètre(s) continu(s): NULL.
+\item Paramètre(s) discret(s): NULL.
+\end{itemize}
+
+\medskip
+
+\subsubsubsection{Algorithmes}
+\index{Algorithme!Oscilloscope}
+L'oscilloscope doit renvoyer le signal qu'il a reçu sur son port d'entrée lors 
+du \code{compute()}.
+
+\subsection{Diagrammes UML}
+
+\subsubsection{Diagrammes de classes}
+
+\subsubsubsection{Package core}
+
+Le \emph{core} comprend une usine qui fournit toutes les abstractions de 
+l'application : modules, paramètres, ports\dots
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[scale=0.5]{img/moteur/Afactory.jpg}
+		\caption{Diagramme de la fabrique de composants applicatifs du package \code{core}}
+		\label{actionButton-ai}
+	\end{center}
+\end{figure}
+
+La plupart des éléments du c\oe ur sont dans le paquetage \emph{core}.
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[scale=0.3]{img/moteur/core-ai.jpg}
+		\caption{Diagramme des éléments du coeur : \code{core}}
+		\label{core-ai}
+	\end{center}
+\end{figure}
+
+\newpage
+
+\subsubsubsection{Package core.modules}
+
+Les modules sont la partie du logiciel qui contiennent les algorithmes génèrant 
+et traitant le signal sonore.
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[scale=0.3]{img/moteur/modules-ai.jpg}
+		\caption{Diagramme des modules : \code{core.modules}}
+		\label{modules-ai}
+	\end{center}
+\end{figure}
+
+\subsubsection{Diagrammes de séquence}
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[scale=0.25]{img/moteur/communication_modules.png}
+		\caption{Diagramme de séquence : \code{core.modules}}
+		\label{communication-modules}
+	\end{center}
+\end{figure}
+

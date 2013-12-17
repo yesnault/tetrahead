@@ -1,0 +1,97 @@
+\input{../document_type/document_type}
+\usepackage{url}
+
+% Titre du document qui apparait sur la première page
+\newcommand{\titre}{Tests : Core}
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{Applicable}
+\newcommand{\version}{1.2}
+\newcommand{\datedoc}{10/02/2006}
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{30/01/2006}{Vincent MAHE - Yvonnick ESNAULT}{Création}{1.0}
+\histo{03/02/2006}{Vincent MAHE - Yvonnick ESNAULT}{Ajout de tests}{1.1}
+\histo{10/02/2006}{Vincent MAHE - Yvonnick ESNAULT}{Ajout de tests}{1.2}
+\end{historique}
+
+\section{Description}
+
+Ce document rassemble les compte-rendus de l'ensemble des tests réalisés sur la partie \emph{Core} de l'application.
+\smallskip
+Un compte-rendu type comporte :
+\begin{itemize}
+ \item (en titre de section) la personne et la date de la série de tests
+ \item la liste des tests effectués
+ \item le cas échéant, les erreurs corrigées
+\end{itemize}
+
+\section{YE/VM 29/01/2006}
+
+\subsection{Parameter}
+\begin{itemize}
+ \item Tests unitaires de la classe parameterValue avec les \verb#TestParameter#
+ \item erreurs sur \emph{currentValue} : la valeur initiale de current value n'était pas positionnée soit
+ sur la valeur mininmum (\verb#ContinuousParameter#), soit sur la première valeur de la liste (\verb#DiscreteParameter#). \emph{Corrigé}.
+\end{itemize}
+
+\subsection{VCFTest}
+\begin{itemize}
+ \item Tests unitaires de la classe VCFTest avec les \verb#VCFTest#
+ \item erreurs sur la récupération des valeur du bouton cut-off 
+ \verb#this.getPortIn(PARAM_CUT_OFF).read()# 
+ au lieu de \\ \verb#this.getContinuousParameter(PARAM_CUT_OFF).getCurrentValue().toInt()# dans la méthode
+ \emph{compute()} :. \emph{Corrigé}.
+ 
+ \item \verb#this.getPortIn(PARAM_RESONANCE).read();#
+ au lieu de \\ \verb#this.getContinuousParameter(PARAM_RESONANCE).getCurrentValue().toInt()# dans la méthode
+ \emph{compute()} :. \emph{Corrigé}.
+ 
+ \item Certaines valeurs sont hors limite pour le filtre passe haut. Une exception
+ est maintenant levée dans la classe \verb#PortOut::write()#. Le filtre
+ passe bas donne une valeur toujours négative :. \emph{Non Corrigé ce jour-ci}.
+  
+\end{itemize}
+
+\section{GL/YE/VM 3/2/06}
+
+GL et YE faisaient un test de l'interface graphique => sont tombés sur des valeurs hors limites sur l'onde ``toit d'usine''.
+\smallskip
+
+Après relecture du code, le problème arrive quand le pitch monte => n baisse et donc on peut avoir n < i et alors i/n > 1 d'où des valeurs sortantes hors cadre.
+
+\smallskip
+Correction apportée à la méthode ``compute''.
+
+\smallskip
+Test pouvant mettre en évidence ce problème : commencer avec un pitch bas puis passer à un pitch très élevé.
+
+
+\section{YE/VM 3/2/06}
+
+YE faisait un test d'enregistrement dans un fichier. En testant le module ADHSR, il a remarqué que la partie ``Release'' de l'enveloppe était beaucoup trop brève, rapportée au paramètre du module et aux autres durées (A, D et H).
+\emph{Corrigé}.
+\smallskip
+
+\section{YE 10/2/06}
+Enregistrement dans un fichier son. Lors d'une seconde génération de son, le 
+buffer de la génération d'avant n'était pas vidé.
+Exemple : génération de la sirène de pompier puis génération d'une sonnerie de téléphone, mais sans attendre l'écriture complète du fichier.
+La sirène de pompier apparait derrière la sonnerie de téléphone.
+\emph{Corrigé}.
+
+% Fin du document
+\end{document}

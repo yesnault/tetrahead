@@ -1,0 +1,140 @@
+\input{../document_type/document_type}
+\usepackage{url}
+
+% Titre du document qui appara??t sur la première page
+\newcommand{\titre}{Rédaction des guides}
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{Libre & Restreint & \textbf{Confidentiel}}
+\newcommand{\etat}{En progression}
+\newcommand{\version}{1.0}
+\newcommand{\datedoc}{24/01/2006}
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{08/02/2006}{Vincent MAHE}{Création}{1.0}
+\histo{08/02/06}{Thibaut LELIÈVRE}{Modification}{1.1}
+\end{historique}
+
+\section{Description}
+
+Ce document décrit l'ensemble des règles à respecter pour la rédaction des aides aux utilisateurs :
+\begin{itemize}
+ \item guide utilisateur (papier)
+ \item bulles d'aide
+ \item aide en ligne
+\end{itemize}
+
+\section{Guide utilisateur}
+
+\subsection{Écriture de \emph{TetraHead}}
+
+À chaque fois que vous voulez écrire \emph{TetraHead}, utilisez la
+commande \verb|\tth|.
+
+\subsection{Style}
+Le guide est impersonnel. Les actions à faire sont exprimées par des verbes d'action à l'infinitif. Exemple : ``\emph{Tirer un connecteur entre le port de sortie d'un module et un port d'entrée d'un autre module.}''.
+
+\subsection{Images}
+Les images incluses dans le manuel doivent être découpées sans bavures. Elles doivent être toutes incluses dans le manuel avec le même rapport de proportion.
+\smallskip
+
+Exemple de mauvais découpage :
+\smallskip
+
+\includegraphics{regle01.png}
+\smallskip
+
+Exemple de mauvaises proportions :
+\smallskip
+
+\includegraphics[scale=0.5]{regle02.png}
+\includegraphics[scale=0.8]{regle03.png}
+\smallskip
+
+\subsection{contenu}
+\begin{enumerate}
+ \item Installation
+ \item Démarrage
+ \item Conventions graphiques et raccourcis clavier
+ \item Premiers pas
+ \item Montage type
+ \item Description des modules
+ \item Utilisation avancée (1)
+ \item Utilisation avancée (2)
+ \item Glossaire
+ \item Index
+ \item Table des matières
+\end{enumerate}
+
+\subsection{en \LaTeX}
+
+Les images doivent être incluses dans un environnement \emph{figure}
+avec une légende.
+
+\section{Bulles d'aide}
+
+\subsection{Style}
+Les bulles d'aide (tooltiptext) sont l'expression individuelle est
+contextuelle de chaque objet. Leur contenu est donc rédigé du point de
+vue de l'objet, à la première personne du singulier. L'utilisateur est
+désigné à la deuxième personne du singulier, pour plus de
+proximité. Exemple : un port de sortie affichera ``\emph{Connectes moi
+à un port d'entrée d'un autre module.}''.
+
+\subsection{mise en forme}
+Dans le cas de longues bulles d'aide, couper le texte en allant à la
+ligne. Faire bien attention que les différentes lignes aient une
+longueur la plus proche les unes des autres.
+
+\section{Aide en ligne}
+L'aide en ligne obéit aux mêmes règles que le manuel utilisateur
+papier. Son contenu sera celui du guide utilisateur, remis au format
+HTML via latex2html (ou un outil équivalent).
+
+\section{Index}
+
+L'index se crée au fur et à mesure que l'on écrit un document en
+utilisant la commande \verb|\index{cle}|.
+
+Voici quelques exemples tirés de \emph{une courte introduction à \LaTeX} :
+
+\begin{table}[!htp]
+\caption{Exemples de clefs d'index}
+\label{index}
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+  \textbf{Exemple} &\textbf{Résultat} &\textbf{Commentaires}\\\hline
+  \rule{0pt}{1.05em}\verb|\index{hello}| &hello, 1 &Entrée normale\\ 
+\verb|\index{hello!Peter}|   &\hspace*{2ex}Peter, 3 &Sous-entrée de 'hello'\\ 
+\verb|\index{Sam@\textsl{Sam}}|     &\textsl{Sam}, 2& Entrée formatée\\ 
+\verb|\index{Lin@\textbf{Lin}}|     &\textbf{Lin}, 7& idem\\ 
+\verb.\index{Jenny|textbf}.     &Jenny, \textbf{3}& Numéro de page formaté\\
+\verb.\index{Joe|textit}.     &Joe, \textit{5}& idem\\
+\verb.\index{eolienne@éolienne}.     &éolienne, 4& clef accentuée
+\end{tabular}
+\end{center}
+\end{table}
+
+Si un mot indexé contient des accents (ou d'autres caractères
+spéciaux), la clé doit être comme cet exemple :
+\emph{eolienne@éolienne}. La première partie de la clé est ce mot sans
+accent (pour que \LaTeX trie correctement ses index, il ne faut pas
+d'accents et autres caractères spéciaux) ; la seconde partie est
+recopiée dans l'index à la fin du document.
+
+
+
+% Fin du document
+\end{document}

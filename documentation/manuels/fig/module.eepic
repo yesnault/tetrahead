@@ -1,0 +1,28 @@
+\setlength{\unitlength}{0.00087489in}
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+{\newcommand{\dashlinestretch}{30}
+\begin{picture}(4357,2139)(0,-10)
+\put(0,1287){\makebox(0,0)[lb]{{\SetFigFont{12}{14.4}{\ttdefault}{\mddefault}{\updefault}Ports}}}
+\put(0,1062){\makebox(0,0)[lb]{{\SetFigFont{12}{14.4}{\ttdefault}{\mddefault}{\updefault}d'entrée}}}
+\put(450,837){\ellipse{150}{150}}
+\put(450,612){\ellipse{150}{150}}
+\put(450,387){\ellipse{150}{150}}
+\put(3375,162){\ellipse{150}{150}}
+\path(150,2112)(3750,2112)
+\path(150,2112)(150,12)
+\path(3750,2112)(3750,12)
+\path(150,12)(3750,12)
+\path(150,1662)(3750,1662)
+\path(750,1662)(750,12)
+\path(3075,1662)(3075,12)
+\put(1275,1812){\makebox(0,0)[lb]{{\SetFigFont{12}{14.4}{\ttdefault}{\mddefault}{\updefault}Nom du module}}}
+\put(825,687){\makebox(0,0)[lb]{{\SetFigFont{12}{14.4}{\ttdefault}{\mddefault}{\updefault}Listes des paramètres}}}
+\put(2850,387){\makebox(0,0)[lb]{{\SetFigFont{12}{14.4}{\ttdefault}{\mddefault}{\updefault}Port de sortie}}}
+\end{picture}
+}

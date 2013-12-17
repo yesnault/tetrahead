@@ -1,0 +1,260 @@
+\input{../document_type/document_type}
+
+\newcommand{\titre}{Algorithmes de filtrage}
+
+\newcommand{\diffusion}{Libre & Restreint & \textbf{Confidentiel}}
+\newcommand{\etat}{En progression}
+\newcommand{\version}{1.0}
+\newcommand{\datedoc}{23/01/2006}
+
+\begin{document}
+
+%\frontmatter
+
+\input{../document_type/titre}
+
+%mainmatter
+
+\begin{historique}
+ %\histo{Date}{Prénom Nom}{Modification}{Version}
+ \histo{25/01/2006}{Vincent MAHÉ}{Création}{1.0}
+\end{historique}
+
+\section{Description}
+Ce document collecte les différents algorithmes de filtrage jugés utiles pour le projet. Chaque algorithme est traité dans une section distincte.
+Il contient :
+\begin{itemize}
+ \item un court descriptif de l'algorithme
+ \item les explications éventuelles
+ \item un exemple de codage de l'algorithme
+\end{itemize}
+
+\section{Filtres LF et HF}
+
+L'algorithme provient du site : \url{http://www.musicdsp.org/archive.php?classid=3#38}
+\smallskip
+
+Algorithme fourni :
+\begin{verbatim}
+LP and HP filter
+
+Type : biquad, tweaked butterworth
+References : Posted by Patrice Tarrabia
+Code :
+r  = rez amount, from sqrt(2) to ~ 0.1
+f  = cutoff frequency
+(from ~0 Hz to SampleRate/2 - though many
+synths seem to filter only  up to SampleRate/4)
+
+The filter algo:
+out(n) = a1 * in + a2 * in(n-1) + a3 * in(n-2) - b1*out(n-1) - b2*out(n-2)
+
+Lowpass:
+      c = 1.0 / tan(pi * f / sample_rate);
+
+      a1 = 1.0 / ( 1.0 + r * c + c * c);
+      a2 = 2* a1;
+      a3 = a1;
+      b1 = 2.0 * ( 1.0 - c*c) * a1;
+      b2 = ( 1.0 - r * c + c * c) * a1;
+
+Hipass:
+      c = tan(pi * f / sample_rate);
+
+      a1 = 1.0 / ( 1.0 + r * c + c * c);
+      a2 = -2*a1;
+      a3 = a1;
+      b1 = 2.0 * ( c*c - 1.0) * a1;
+      b2 = ( 1.0 - r * c + c * c) * a1;
+\end{verbatim}
+
+\section{Filtre LF/HF en cascade}
+
+L'algorithme provient du site : \url{http://musicdsp.org/archive.php?classid=3#131}
+\smallskip
+
+Algorithme fourni :
+\begin{verbatim}
+Cascaded resonant lp/hp filter
+
+Type : lp+hp
+References : Posted by tobybear[AT]web[DOT]de
+
+Notes :
+// Cascaded resonant lowpass/hipass combi-filter
+// The original source for this filter is from Paul Kellet from
+// the archive. This is a cascaded version in Delphi where the
+// output of the lowpass is fed into the highpass filter.
+// Cutoff frequencies are in the range of 0<=x<1 which maps to
+// 0..nyquist frequency
+
+// input variables are:
+// cut_lp: cutoff frequency of the lowpass (0..1)
+// cut_hp: cutoff frequency of the hipass (0..1)
+// res_lp: resonance of the lowpass (0..1)
+// res_hp: resonance of the hipass (0..1)
+
+
+Code :
+var n1,n2,n3,n4:single; // filter delay, init these with 0!
+    fb_lp,fb_hp:single; // storage for calculated feedback
+const p4=1.0e-24; // Pentium 4 denormal problem elimination
+
+function dofilter(inp,cut_lp,res_lp,cut_hp,res_hp:single):single;
+begin
+fb_lp:=res_lp+res_lp/(1-cut_lp);
+fb_hp:=res_hp+res_hp/(1-cut_lp);
+n1:=n1+cut_lp*(inp-n1+fb_lp*(n1-n2))+p4;
+n2:=n2+cut_lp*(n1-n2);
+n3:=n3+cut_hp*(n2-n3+fb_hp*(n3-n4))+p4;
+n4:=n4+cut_hp*(n3-n4);
+result:=i-n4;
+end;
+\end{verbatim}
+
+\section{Filtre LF à 4 pôles}
+
+L'algorithme provient du site : \url{http://musicdsp.org/archive.php?classid=3#131}
+\smallskip
+
+Algorithme fourni :
+
+\begin{verbatim}
+Moog VCF, variation 2
+
+Type : 24db resonant lowpass
+References : CSound source code, Stilson/Smith CCRMA paper., Timo Tossavainen (?) version
+
+Notes :
+in[x] and out[x] are member variables, init to 0.0 the controls:
+
+fc = cutoff, nearly linear [0,1] -> [0, fs/2]
+res = resonance [0, 4] -> [no resonance, self-oscillation]
+
+Code :
+Tdouble MoogVCF::run(double input, double fc, double res)
+{
+  double f = fc * 1.16;
+  double fb = res * (1.0 - 0.15 * f * f);
+  input -= out4 * fb;
+  input *= 0.35013 * (f*f)*(f*f);
+  out1 = input + 0.3 * in1 + (1 - f) * out1; // Pole 1
+  in1  = input;
+  out2 = out1 + 0.3 * in2 + (1 - f) * out2;  // Pole 2
+  in2  = out1;
+  out3 = out2 + 0.3 * in3 + (1 - f) * out3;  // Pole 3
+  in3  = out2;
+  out4 = out3 + 0.3 * in4 + (1 - f) * out4;  // Pole 4
+  in4  = out3;
+  return out4;
+}
+\end{verbatim}
+
+\section{filtre LowPass ``à la Moog''}
+
+L'algorithme provient du site : \url{http://musicdsp.org/archive.php?classid=3#24}
+\smallskip
+
+Algorithme fourni :
+
+\begin{verbatim}
+        
+Moog VCF
+
+Type : 24db resonant lowpass
+References : CSound source code, Stilson/Smith CCRMA paper.
+
+Notes :
+Digital approximation of Moog VCF. Fairly easy to calculate coefficients,
+fairly easy to process algorithm, good sound.
+
+Code :
+//Init
+cutoff = cutoff freq in Hz
+fs = sampling frequency //(e.g. 44100Hz)
+res = resonance [0 - 1] //(minimum - maximum)
+
+f = 2 * cutoff / fs; //[0 - 1]
+k = 3.6*f - 1.6*f*f -1; //(Empirical tunning)
+p = (k+1)*0.5;
+scale = e^((1-p)*1.386249;
+r = res*scale;
+y4 = output;
+
+y1=y2=y3=y4=oldx=oldy1=oldy2=oldy3=0;
+
+//Loop
+//--Inverted feed back for corner peaking
+x = input - r*y4;
+
+//Four cascaded onepole filters (bilinear transform)
+y1=x*p + oldx*p - k*y1;
+y2=y1*p+oldy1*p - k*y2;
+y3=y2*p+oldy2*p - k*y3;
+y4=y3*p+oldy3*p - k*y4;
+
+//Clipper band limited sigmoid
+y4 = y4 - (y4^3)/6;
+
+oldx = x;
+oldy1 = y1;
+oldy2 = y2;
+oldy3 = y3;
+\end{verbatim}
+
+\section{LP and HP filter - Patrice Tarrabia}
+
+L'algorithme provient du site : \url{http://www.musicdsp.org/showone.php?id=38}
+
+\begin{verbatim}
+LP and HP filter
+Type : biquad, tweaked butterworthReferences : Posted by Patrice TarrabiaCode :
+r  = rez amount, from sqrt(2) to ~ 0.1
+f  = cutoff frequency
+(from ~0 Hz to SampleRate/2 - though many
+synths seem to filter only  up to SampleRate/4)
+
+The filter algo:
+out(n) = a1 * in + a2 * in(n-1) + a3 * in(n-2) - b1*out(n-1) - b2*out(n-2)
+
+Lowpass:
+      c = 1.0 / tan(pi * f / sample_rate);
+
+      a1 = 1.0 / ( 1.0 + r * c + c * c);
+      a2 = 2* a1;
+      a3 = a1;
+      b1 = 2.0 * ( 1.0 - c*c) * a1;
+      b2 = ( 1.0 - r * c + c * c) * a1;
+
+Hipass:
+      c = tan(pi * f / sample_rate);
+
+      a1 = 1.0 / ( 1.0 + r * c + c * c);
+      a2 = -2*a1;
+      a3 = a1;
+      b1 = 2.0 * ( c*c - 1.0) * a1;
+      b2 = ( 1.0 - r * c + c * c) * a1;
+
+Comments
+from : andy_rossol[AT]hotmail[DOT]com
+comment : Ok, the filter works, but how to use the resonance parameter (r)? The range from sqrt(2)-lowest to 0.1 (highest res.) is Ok for a LP with Cutoff > 3 or 4 KHz, but for lower cutoff frequencies and higher res you will get values much greater than 1! (And this means clipping like hell) So, has anybody calculated better parameters (for r, b1, b2)?
+
+from : kainhart[AT]hotmail[DOT]com
+comment : Below is my attempt to implement the above lowpass filter in c#. I'm just a beginner at this so it's probably something that I've messed up. If anybody can offer a suggestion of what I may be doing wrong please help. I'm getting a bunch of stable staticky noise as my output of this filter currently.
+
+from : kainhart[AT]hotmail[DOT]com
+comment : public class LowPassFilter { /// <summary> /// rez amount, from sqrt(2) to ~ 0.1 /// </summary> float r; /// <summary> /// cutoff frequency /// (from ~0 Hz to SampleRate/2 - though many /// synths seem to filter only up to SampleRate/4) ///</summary> float f; float c; float a1; float a2; float a3; float b1; float b2; // float in0 = 0; float in1 = 0; float in2 = 0; // float out0; float out1 = 0; float out2 = 0; private int _SampleRate; public LowPassFilter(int sampleRate) { _SampleRate = sampleRate; // SetParams(_SampleRate / 2f, 0.1f); SetParams(_SampleRate / 8f, 1f); } public float Process(float input) { float output = a1 * input + a2 * in1 + a3 * in2 - b1 * out1 - b2 * out2; in2 = in1; in1 = input; out2 = out1; out1 = output; Console.WriteLine(input + ", " + output); return output; }
+
+from : kainhart[AT]hotmail[DOT]com
+comment : /// <summary> /// /// </summary> public float CutoffFrequency { set { f = value; c = (float) (1.0f / Math.Tan(Math.PI * f / _SampleRate)); SetParams(); } get { return f; } } /// <summary> /// /// </summary> public float Resonance { set { r = value; SetParams(); } get { return r; } } public void SetParams(float cutoffFrequency, float resonance) { r = resonance; CutoffFrequency = cutoffFrequency; } /// <summary> /// TODO rename /// </summary> /// <param name="c"></param> /// <param name="resonance"></param> private void SetParams() { a1 = 1f / (1f + r*c + c*c); a2 = 2 * a1; a3 = a1; b1 = 2f * (1f - c*c) * a1; b2 = (1f - r*c + c*c) * a1; } }
+
+from : kainhart[AT]hotmail[DOT]com
+comment : Nevermind I think I solved my problem. I was missing parens around the coefficients and the variables ...(a1 * input)...
+
+from : kainhart[AT]hotmail[DOT]com
+comment : After implementing the lowpass algorithm I get a loud ringing noise on some frequencies both high and low. Any ideas?
+
+
+\end{verbatim}
+
+\end{document}

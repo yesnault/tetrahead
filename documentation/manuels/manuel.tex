@@ -1,0 +1,45 @@
+\input{../document_type/document_type}
+\usepackage{makeidx}
+\usepackage{eepic}
+\usepackage{xspace}
+
+\newcommand{\tth}{\textsc{TetraHead}\xspace}
+
+\newcommand{\titre}{Guide de l'utilisateur}
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{Applicable}
+\newcommand{\version}{1.0}
+\newcommand{\datedoc}{15/02/06}
+
+\makeindex
+
+\begin{document}
+\input{../document_type/titre}
+
+\begin{historique}
+\histo{09/02/2006}{Thibaut Lelièvre}{Création}{1.0}
+\histo{10/02/2006}{Thibaut Lelièvre}{Tutorial}{1.1}
+\histo{13/02/2006}{Yvonnick Esnault, Vincent Mahé}{Description des modules}{1.2}
+\histo{13/02/2006}{Vincent Mahé}{Installation}{1.3}
+\histo{14/02/2006}{Thibaut Lelièvre, Vincent Mahé}{Relecture}{1.4}
+\end{historique}
+\newpage
+
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+
+\input{presentation}
+\input{installation}
+\input{demarrage}
+\input{conventions_graphiques}
+\input{premiers_pas}
+\input{description_modules}
+\input{exemples}
+%\input{glossaire}
+\newpage
+
+\printindex
+
+\end{document}

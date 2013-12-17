@@ -1,0 +1,172 @@
+\input{../document_type/document_type}
+
+\newcommand{\titre}{Dossier Analyse (PIM)}
+
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{Applicable}
+\newcommand{\version}{1.3}
+\newcommand{\datedoc}{15/02/2006}
+
+\begin{document}
+
+%\frontmatter
+
+\input{../document_type/titre}
+
+%mainmatter
+
+\begin{historique}
+ %\histo{Date}{Prénom Nom}{Modification}{Version}
+ \histo{23/01/2006}{Yvonnick ESNAULT}{Création}{1.0}
+ \histo{24/01/2006}{Vincent MAHÉ}{Relecture, corrections}{1.1}
+  \histo{25/01/2006}{Gaëtan Le Brun}{ajout diagrammes}{1.2}
+ \histo{25/01/2006}{Vincent MAHÉ}{ajout Use Cases}{1.2}
+   \histo{25/01/2006}{Gaëtan Le Brun}{ajout contraintes OCL}{1.2}
+ \histo{14/02/2006}{Yvonnick ESNAULT}{Relecture}{1.3}
+\end{historique}
+
+\section{Description}
+Ce document d'analyse (ou document de conception initiale) a pour objectif de déterminer
+un premier modèle du logiciel, indépendant de la plate-forme utilisée. Il rappelle également
+les objectifs du projet ainsi que la signification et le rôle des différents modules 
+le composant.
+
+\section{Objectifs}
+L'objectif du projet est de développer un synthétiseur de sons. Ce synthétiseur
+est composé de plusieurs modules, reliés entre eux à l'aide de connecteurs. Chaque module
+effectue des traitements sur le signal qu'il peut recevoir sur un (ou plusieurs) port(s)
+d'entrée. Le résultat de ces traitements (signal) est écrit dans le port de sortie.
+
+L'utilisateur doit choisir des modules parmis les modules proposés, les relier entre eux 
+visuellement à l'aide de connecteurs et ajuster les paramètres de chaque module.
+
+À tout instant, il peut mettre en marche le synthétiseur. Le synthétiseur devra
+fonctionner avec au minimum un module de génération de Signal (VCO) et un module de sortie (OUT).
+
+\section{Description des modules}
+Tous les modules possèdent au maximum un port de sortie, seul le module Sortie n'en comportant pas.
+
+Quelques règles : 
+\begin{itemize}
+ \item Les modules sont reliés entre eux par des connecteurs,
+ \item Chaque connecteur relie un port d'entrée avec un port de sortie,
+ \item Un port de sortie peut être relié à plusieurs connecteurs,
+ \item Un port d'entrée ne peut être relié qu'à un connecteur au plus,
+ \item Un port d'entrée non connecté produit une valeur par défaut,
+ \item Le montage peut avoir des boucles.
+\end{itemize}
+
+
+\subsection{VCO}
+VCO : Voltage Controlled Oscillator. Le VCO possède trois paramètres : 
+\begin{itemize}
+ \item {\it pitch} : bouton permettant de régler la note de départ : de 200 à 600 Hertz (1 octave sur le DO),
+ \item {\it pitch-in} : port d'entrée qui reçoit un signal, utilisé par le VCO pour ajouter des
+ hamoniques au signal,
+ \item forme du signal de sortie : signal carré, triangulaire, sinusoïdal.
+\end{itemize}
+
+\subsection{VCF}
+VCF : Voltage Controlled Filter. Le VCF possède trois paramètres : 
+\begin{itemize}
+ \item {\it cutoff} :  valeur en Hertz à partir de laquelle le filtre agit (fréquence de coupure),
+ \item {\it resonance} :  ce paramètre permet d'accentuer la fréquence qui se trouve juste en
+ dessous la fréquence de coupure.
+ \item type de filtre : 
+  \begin{itemize}
+   \item {\it LPF} : Low Pass Filter (passe-bas), 
+   \item {\it HPF} : High Pass Filter (passe-haute),
+   \item {\it BPF} : Band Pass Filter (passe-bande).
+  \end{itemize}
+\end{itemize}
+Par exemple, le filtre passe haut atténue les fréquences basses suivant la valeur du cutoff et laisse passer les fréquences hautes.
+
+\subsection{OUT}
+
+\subsection{ADSR (ENV)}
+ADSR : Générateur d'enveloppe.
+\begin{itemize}
+ \item A ({\it Attack}) : temps d'attaque,
+ \item D ({\it Decay}) : temps de décroissance,
+ \item S ({\it Sustain}) : niveau de maintien,
+ \item R ({\it Release}) : temps d'extinction.
+\end{itemize}
+
+\subsection{VCA}
+VCA : Voltage Controlled Amplifier.
+\begin{itemize}
+ \item {\it gain} : Coefficient d'amplification. Il s'exprime en décibels.
+Formule : $sigOut = sigIn * 2^{( gain -5v)}$
+\end{itemize}
+
+\subsection{MIXER}
+Le mixer possède au minimum 2 ports d'entrées. À chaque port d'entrée est attaché
+un bouton qui permet de controller le volume.
+
+\section{PIM (Plateform Independent Models)}
+
+\subsection{Diagramme de cas d'utilisation}
+\includegraphics[width=8cm]{uml/exports/MainUseCases.jpg}
+
+\subsection{Diagramme de classes (Core)}
+\includegraphics[width=15cm]{uml/exports/diag_classes_1.png}
+
+\subsection{Diagramme de classes (précisé)}
+\includegraphics[width=15cm]{uml/exports/diag_classes_1_rafine.png}
+
+\subsection{Diagramme de séquence}
+\includegraphics[width=15cm]{uml/exports/diag_sequence1_communication_entre_modules.png}
+
+\subsection{Contraintes OCL}
+
+\begin{verbatim}
+Context Module
+        inv : self.out.size() <= 1
+
+Context VCO
+  inv : in->size() <= 1 
+    and in->collect(p : Port | p.name = "pitch_in")->size() <= 1
+    and out->collect(p : Port | p.name = "sig_out")->size() = 1
+  inv : parameters->collect(cp : ContinuousParameter | cp.name = "pitch")->size() = 1
+    and parameters->collect(dp : DiscreteParameter | dp.name = "shape")->size() = 1
+
+Context VCF
+  inv : in->size() = 2
+    and in->collect(p : Port | p.name = "sig_in")->size() = 1
+    and in->collect(p : Port | p.name = "cut_off")->size() = 1 
+    and out->collect(p : Port | p.name = "sig_out")->size() = 1
+  inv : parameters->collect(cp : ContinuousParameter | cp.name = "cut_off")->size() = 1
+    and 
+        parameters->collect(cp : ContinuousParameter | cp.name = "resonance")->size() = 1
+
+Context VCA
+  inv : 1 <= self.in->size() <= 2
+    and in->collect(p : Port | p.name = "sig_in")->size() = 1 
+    and in->collect(p : Port | p.name = "gain")->size() = 1
+    and out->collect(p : Port | p.name = "sig_out")->size() = 1
+  inv : parameters->collect(cp : ContinuousParameter | cp.name = "gain")->size() = 1
+
+Context ADSR
+  inv : in->size() = 1
+    and in->collect(p : Port | p.name = "sig_in")->size() = 1
+    and out->collect(p : Port | p.name = "sig_out")->size() = 1
+  inv : parameters->collect(cp : ContinuousParameter | cp.name = "attack")->size() = 1
+    and parameters->collect(cp : ContinuousParameter | cp.name = "decay")->size() = 1
+    and parameters->collect(cp : ContinuousParameter | cp.name = "sustain")->size() = 1
+    and parameters->collect(cp : ContinuousParameter | cp.name = "release")->size() = 1
+
+Context OUT
+  inv : in->size() = 1
+    and in->collect(p : Port | p.name = "sig_in")->size() = 1
+
+Context MIXER
+  inv : in->size() >= 2
+    and in->forAll(
+            p : Port | parameters->exists(cp : ContinuousParameter | cp.name = p.name)
+        )
+    and out->collect(p : Port | p.name = "sig_out")->size() = 1
+
+\end{verbatim}
+
+\end{document}
+

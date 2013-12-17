@@ -1,0 +1,190 @@
+\subsection{Généralités sur l'interface graphique}
+\label{interface}
+\index{Interface graphique}
+
+Le logiciel s'utilise en grande partie avec la souris. L'interface est donc 
+très animée pour l'utilisateur. La fenêtre principale de l'interface graphique 
+se découpe en 3 zones :
+\begin{itemize}
+\item Une barre d'outils supérieure \index{Barre d'outils!superieure@supérieure}
+\item Un espace de travail \index{Espace de travail}
+\item Une barre d'outils inférieure \index{Barre d'outils!inferieure@inférieure}
+\end{itemize}
+
+\begin{figure}[!h]
+	\begin{center} 
+		\includegraphics[width=0.7\textwidth]{img/interface/screenshot.png}
+		\caption{Capture d'écran de l'interface graphique}
+		\label{connector-ai}
+	\end{center}
+\end{figure}
+
+La barre supérieure contient les boutons qui modifient l'état du synthétiseur 
+après un clic de souris : lecture, arrêt, ouverture d'une boîte de 
+dialogue\dots \medskip
+
+La barre inférieure contient les boutons qui permettent à l'utilisateur de 
+créer des modules. Pour créer un module, il faut effectuer un drag sur le 
+bouton corespondant à ce module. Quand la souris entre dans l'espace de travail, le module y 
+est aussitôt ajouté. L'utilisateur peut alors le placer où il souhaite. \medskip
+
+Pour connecter deux modules, il faut également réaliser un drag'n'drop 
+\index{Drag'n'Drop} depuis un port de sortie vers un port d'entrée. Le nombre 
+de connecteurs reliés à un port de sortie est illimité. Mais il ne peut y avoir 
+qu'un seul connecteur relié à un port d'entrée. Quand un utilisateur tire un 
+connecteur vers un port d'entrée, le port d'entrée se couvre d'une bordure 
+rouge quand le curseur est au dessus de lui si ce port est déjà connecté. 
+Si le port d'entrée est libre et peut donc accepter la connexion, la bordure est verte. \medskip
+
+\begin{figure}[!htpb]
+	\begin{center} 
+		\includegraphics[width=\textwidth]{img/interface/connector-drag-sequence.png}
+		\caption{Diagramme de séquence de la création du connecteur avec 
+		le drag'n'drop AWT}
+	\end{center}
+\end{figure}
+
+Le changement de valeur des paramètres des modules se fait également avec la 
+souris. Tous les paramètres, qu'ils soient de types discrets ou continus, sont 
+représentés par un bouton circulaire. La différence visuelle entre les deux est 
+que le paramètre continu est entouré de petites graduations. Pour faire varier 
+un paramètre discret\index{parametre@Paramètre!discret@discret}, un clic droit 
+sur le bouton le fait tourner d'un cran vers la droite et réciproquement avec 
+le bouton gauche. \medskip
+
+Pour le paramètre continu\index{parametre@Paramètre!continu}, il faut faire 
+tourner la souris autour du centre du bouton pendant un clic pour faire varier 
+la valeur du paramètre. Une étiquette située au dessus du bouton indique la 
+valeur du paramètre. De plus, pour un paramètre continu, cette étiquette est 
+éditable afin de pouvoir entrer une valeur au clavier. En effet, en n'utilisant 
+que la souris, il est difficile, voire impossible, d'obtenir une valeur 
+précise.\medskip
+
+Pour supprimer un connecteur entre deux modules, il suffit de cliquer dessus 
+avec le bouton droit. \medskip
+
+Pour supprimer un module, il faut que celui-ci ne soit connecté avec aucun 
+autre module. Dans l'espace de travail, se trouve une petite corbeille 
+\index{Corbeille}verte. En déplaçant un module au dessus de la corbeille, 
+celui-ci est supprimé. Au cours du déplacement d'un module, quand le curseur 
+passe au dessus de la corbeille, le module disparaît temporairement. Mais la 
+suppression ne s'effectue que si l'utilisateur relache le bouton de la souris 
+au dessus de la corbeille. Le module réapparaît au moment où la souris quitte 
+la corbeille. \medskip
+
+\index{retoaction semantique@Rétroaction sémantique}
+La rétroaction sémantique est assurée par :
+\begin{itemize}
+  \item de nombreuses bulles d'aide,
+  \item des changements de curseurs de la souris (exemple : pendant un 
+  drag'n'drop),
+  \item des changements de couleurs (par exemple : pour savoir si on peut 
+  connecter deux modules),
+  \item des étiquettes indiquant la valeur des paramètres,
+  \item des messages d'erreurs si l'utilisateur essaie une opération interdite,
+  \item les boutons qui s'agrandissent quand la souris passe dessus\dots
+\end{itemize}
+
+\subsection{Package \code{gui}}
+\index{Package!gui@\code{gui}}
+
+Ce package regroupe des classes instanciant les différentes fenêtres de 
+l'application. \newpage
+
+\subsection{Package \code{gui.connector}}
+\index{Package!gui.connector@\code{gui.connector}}
+
+Le package \code{gui.connector} (figure \ref{connector-ai}) contient les 
+classes gérant le connecteur\index{Connecteur} entre deux modules. Le 
+connecteur, instance de \code{JConnector} est représenté par une courbe de 
+Bézier \index{Courbe de Bezier@Courbe de Bézier} 
+\index{Bezier@Bézier|see{Courbe de Bézier}}dont les points de contrôles 
+\index{Points de controle@Points de contrôle}sont des instances de 
+\code{ControlPoint}. Les classes \code{ConnectorDragger}, 
+\code{ConnectorDropper} et \code{ConnectorTransferable} gèrent le drag'n'drop 
+AWT. \bigskip
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[width=\textwidth]{img/interface/connector-ai.png}
+		\caption{Diagramme de classes du package \code{gui.connector}}
+		\label{connector-ai}
+	\end{center}
+\end{figure}
+\newpage
+
+\subsection{Packages \code{gui.controle} et \code{gui.presentation}}
+\index{Package!gui.controle@\code{gui.controle}}
+\index{Package!gui.presentation@\code{gui.presentation}}
+
+Ces packages regroupent les composants \emph{contrôle} et \emph{présentation} 
+du modèle PAC (cf.~section~\ref{pac}, page~\pageref{pac}).
+
+\subsection{Package \code{gui.presentation.parameterAction}}
+\index{Package!gui.presentation.parameterAction@\code{gui.presentation.parameterAction}}
+
+Ce package regroupe toutes les classes gérant le comportement des paramètres, 
+discrets et continus, des modules.
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[width=\textwidth]{img/interface/gui-presentation-parameterAction.png}
+		\caption{Diagramme de classes du package \code{gui.presentation.parameterAction}}
+		\label{toolbar-ai}
+	\end{center}
+\end{figure}
+\newpage
+
+\subsection{Package \code{gui.toolbar}}
+\index{Package!gui.toolbar@\code{gui.toolbar}}
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[width=\textwidth]{img/interface/toolbar-ai.png}
+		\caption{Diagramme de classes du package \code{gui.toolbar}}
+		\label{toolbar-ai}
+	\end{center}
+\end{figure}
+
+Les classes liées aux barres d'outils\index{Barre d'outils} sont regroupées au 
+sein du package \code{gui.toolbar}. Les deux barres d'outils sont des instances 
+de \code{ScalableButtonMenuBar}. Le constructeur de cette classe prend en 
+paramètre un objet \code{ScalableButtonFactory}. Cet objet est une usine chargé 
+de produire des boutons. Les boutons générés sont ainsi ajoutés dans la barre 
+d'outils. L'usine permet la réutilisation de cette la classe 
+\code{ScalableButtonMenuBar}. Les boutons sont des instances de 
+\code{ScalableButton} dont le comportement est de s'agrandir quand la souris 
+passe dessus. \bigskip
+
+\begin{figure}[!htpb]
+	\begin{center} 
+		\includegraphics[width=\textwidth]{img/interface/factory-sequence.png}
+		\caption{Diagramme de séquence de création d'une barre d'outils avec une usine}
+	\end{center}
+\end{figure}
+
+\index{Package!gui.toolbar.actionButton@\code{gui.toolbar.actionButton}}
+\index{Package!gui.toolbar.moduleCreator@\code{gui.toolbar.moduleCreator}}
+Ce package contient deux sous-packages : \code{gui.toolbar.actionButton} 
+(figure~\ref{actionButton-ai}) et \\
+ \code{gui.toolbar.moduleCreator} 
+(figure~\ref{moduleCreator}). Chaque package contient des classes paramétrant 
+la commande des objets \code{ScalableButton}. Le premier sous-package contient 
+les commandes de la barre d'outils supérieure (lecture, arrêt, reset, options). 
+Le second sous-package contient les commandes de création de modules. \newpage
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[width=\textwidth]{img/interface/actionButton-ai.png}
+		\caption{Diagramme de classes du package \code{gui.toolbar.actionButton}}
+		\label{actionButton-ai}
+	\end{center}
+\end{figure}
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[width=\textwidth]{img/interface/gui-toolbar-moduleCreator.png}
+		\caption{Diagramme de classes du package \code{gui.toolbar.moduleCreator}}
+		\label{moduleCreator}
+	\end{center}
+\end{figure}

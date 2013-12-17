@@ -1,0 +1,52 @@
+\input{../document_type/document_type}
+\usepackage{url}
+
+% Titre du document qui apparait sur la première page
+\newcommand{\titre}{Tests : Modules}
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{En progression}
+\newcommand{\version}{1.0}
+\newcommand{\datedoc}{24/01/2006}
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{30/01/2006}{Vincent MAHE}{Création}{1.0}
+\end{historique}
+
+\section{Description}
+
+Ce document rassemble les compte-rendus de l'ensemble des tests réalisés sur la partie \emph{Core.Modules} de l'application.
+\smallskip
+Un compte-rendu type comporte :
+\begin{itemize}
+ \item (en titre de section) la personne et la date de la série de tests
+ \item la liste des tests effectués
+ \item le cas échéant, les erreurs corrigées
+\end{itemize}
+
+\section{VM 29/01/2006}
+
+\begin{itemize}
+ \item Test du programme TestsCompute, avec un VCO comme exemple
+ \item erreurs sur \emph{Module} : les HashTable des ports et des paramètres n'étaient pas initialisées (code produit par Omondo). Corrigé.
+\end{itemize}
+\begin{itemize}
+ \item Test du module VCO, avec le programme TestsCompute
+ \item erreurs sur \emph{VCO} : la fonction d'ondes sinusoïdale rendait 0. Corrigé (division d'\emph{entiers} remplacée par division à numérateur \emph{double}).
+\end{itemize}
+
+% Fin du document
+\end{document}

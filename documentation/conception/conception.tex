@@ -1,0 +1,83 @@
+\input{../document_type/document_type}
+\usepackage{url}
+\usepackage{makeidx}
+
+% Titre du document qui apparait sur la première page
+\newcommand{\titre}{Dossier de conception (PSM)}
+
+
+% Les paramètres suivants remplissent le tableau de propriété.
+% Pour le paramètre \diffusion mettre en gras celui qui nous intéresse
+\newcommand{\diffusion}{\textbf{Libre} & Restreint & Confidentiel}
+\newcommand{\etat}{Applicable}
+\newcommand{\version}{1.6}
+\newcommand{\datedoc}{15/02/2006}
+\makeindex
+
+% Début du document
+\begin{document}
+
+% Crée la première page
+\input{../document_type/titre}
+
+% Historique du document. 
+\begin{historique}
+% Il faut ajouter une balise \histo pour chaque mise à jour
+% du document.
+% \histo{Date}{Prénom Nom}{Modification}{Version}
+\histo{28/01/2006}{Yvonnick Esnault}{Création}{1.0}
+\histo{08/02/2006}{Yvonnick Esnault}{Mise à jour}{1.1}
+\histo{11/02/2006}{Vincent Mahé}{Moteur}{1.2}
+\histo{10/02/2006}{Gaëtan Le Brun}{Modèle PAC et digrammes UML}{1.3}
+\histo{13/02/2006}{Thibaut Lelièvre}{Interface}{1.4}
+\histo{14/02/2006}{Vincent Mahé}{Relecture}{1.5}
+\histo{15/02/2006}{Thibaut Lelièvre}{Relecture}{1.6}
+\end{historique}
+
+\tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+
+\section{Description}
+
+Ce document décrit les éléments de conception relatifs au projet, principalement
+une description précise des différents modules, l'architecture de l'application (diagrammes UML).
+
+Les sources sont divisées en deux grands paquetages principaux, le \emph{core} 
+et la \emph{GUI}, eux-mêmes subdivisés en plusieurs paquetages adhoc.
+\emph{Core} correspond au modèle métier et \emph{GUI} à l'interface graphique qui permet 
+d'agir sur le modèle tout en restant totalement indépendant de l'implémentation, en se basant
+sur le modèle \emph{PAC}, section~\ref{pac}, page~\pageref{pac}.
+
+\begin{figure}[!h]
+	\begin{center} 
+\includegraphics[scale=0.5]{img/paquetages.png}
+		\caption{Diagramme des paquetages}
+		\label{paquetages}
+	\end{center}
+\end{figure}
+
+\section{Moteur de Son}
+\input{moteur.tex}
+
+\input{pac.tex}
+
+\section{Interface Graphique}
+\input{interface.tex}
+
+\section{Archive du projet}
+
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{conception}
+\newpage
+
+\printindex
+
+
+% Fin du document
+\end{document}

@@ -1,0 +1,587 @@
+\newpage
+\section{Mod\`ele d'architecture PAC} \label{pac}
+
+Un des objectifs du projet est de rendre interactif chaque composant applicatif 
+du mod\`ele m\'etier d\'evelopp\'e tout en  veillant  \`a ce que les parties 
+``Synth\`ese audio'' et ``Interface graphique'' soient bien s\'epar\'ees.
+
+Afin de respecter à cette contrainte, il n\'ecessaire de mettre en place un 
+proxy qui va \^etre un composant dont le r\^ole sera premi\`erement d'assurer 
+l'acc\`es au composant applicatif et deuxi\`ement, de r\'epercuter les 
+modifications du composant applicatif via un composant de pr\'esentation. 
+\bigskip
+
+Le choix du mod\`ele d'architecture \index{PAC} PAC  \cite{duval} se r\'ev\`ele donc 
+judicieux. En le respectant au maximum, la s\'eparation entre le mod\`ele 
+m\'etier et l'interface graphique est facilitée.
+
+Le mod\`ele PAC s'articule autour d'une entit\'e de base nomm\'ee agent PAC. 
+Chaque agent se d\'ecoupe en trois facettes :
+\begin{itemize}
+\item Pr\'esentation. \index{PAC!presentation@Présentation}
+\item Abstraction. \index{PAC!abstraction@Abstraction}
+\item Contrôle. \index{PAC!controle@Contrôle}
+\end{itemize}
+
+Le composant servant de proxy se substitue \`a la facette Contr\^ole, le 
+composant applicatif \`a la facette Abstraction, et le composant de 
+pr\'esentation \`a la facette Pr\'esentation. \bigskip
+
+%*****************************************
+
+\subsection{Mise en oeuvre du mod\`ele PAC}
+Les composants de contrôle de l'application sont construits à partir du patron 
+\code{Proxy} \index{Design Pattern!Proxy}.
+
+\begin{figure}[h!] \centering\includegraphics[scale=1.0]{img/pac/proxy.png}
+\caption{Patron de conception \code{Proxy}}
+\end{figure}
+
+Le composant de contr\^ole remplace le composant applicatif aux vues des autres 
+composants. Il assure la coh\'erence entre son composant applicatif et son 
+composant de pr\'esentation.
+
+\newpage
+
+ Les services propos\'es par les composants applicatifs du mod\`ele m\'etier 
+ sont d\'efinis par l'interm\'ediaire d'interfaces impl\'ement\'ees par chacun 
+ d'entre eux. On s'inspire alors du design pattern \code{Template Method} 
+ \index{Design Pattern!Template Method}.
+
+\begin{figure}[h!] 
+\centering\includegraphics[scale=0.55]{img/pac/template_method.jpg}
+\caption{Patron de conception \code{Template Method}}
+\end{figure}
+
+Ce patron force la définition de l'interface d'acc\`es de chaque composant. Il 
+permet aussi de d\'ecoupler  le composant de contrôle de son composant 
+applicatif et de son composant de présentation.  \bigskip
+ 
+En appliquant au mod\`ele PAC les deux patrons d\'ecrits pr\'ec\'edemment on 
+obtient les composants PAC suivants :
+
+\begin{figure}[h!] 
+\begin{center}
+	\includegraphics[scale=0.6]{img/pac/pac.jpg}
+	\caption{mod\`ele PAC et proxy contrôle par d\'el\'egation}
+\end{center}
+\end{figure}
+
+\begin{description}
+\item [Remarque ]:\\  Conformément au patron \code{Proxy}, chaque composant de 
+contrôle doit implémenter l'interface du composant applicatif auquel il est 
+rattaché. L'interface du composant de contrôle hérite donc de l'interface du 
+composant applicatif.
+\item[Notations ]:\\ Le nom de l'interface définissant les services rendus par 
+un composant donné est préfixé par la lettre \verb+I+ suivie du nom du 
+composant applicatif.
+
+Le nom de la classe implémentant le contrôle d'un composant applicatif est 
+préfixé par la lettre \verb+C+ suivie du nom du 
+composant applicatif.
+
+Enfin, le nom de la classe implémentant la présentation d'un composant 
+applicatif est préfixé par la lettre \verb+P+ suivie du nom du composant applicatif.
+\end{description}
+\bigskip
+
+Le modèle d'architecture retenu facilite l'utilisation de fabriques de 
+composants. Les fabriques ont pour avantage de rendre les composants 
+interactifs les plus ind\'ependants possibles des composants applicatifs. Elles 
+sont impl\'ement\'ees sur la base du patron \code{Abstract Factory} 
+\index{Design Pattern!Abstract Factory}.
+
+\begin{figure}[h!] 
+	\begin{center}
+		\includegraphics[scale=1.0]{img/pac/abstract_factory.png}
+		\caption{Patron de conception \code{Abstract Factory}}
+	\end{center}
+\end{figure}
+
+Une première fabrique (\code{core.AFactory}) est consacrée à la création des 
+composants applicatifs et est utilisée dans les composants de contrôle 
+associés. Une seconde fabrique (\code{gui.controle.CFactory}) est consacrée à 
+la création des composants de contrôle. Ces deux fabriques implémentent lae même 
+interface (\code{IPFactory}). La seconde fabrique permet alors de substituer à 
+chaque composant applicatif son composant proxy associé.
+
+Enfin une troisième fabrique (\code {gui.presentation.PFactory}) permet de 
+créer les composants de présentation et est utilisée dans les composants de 
+contrôle afin d'associer une abstraction à la présentation correspondante.
+
+\newpage Chaque fabrique de composants impl\'emente en plus le patron 
+\code{Singleton} \index{Design Pattern!Singleton}.
+
+\begin{figure}[h!] \centering\includegraphics[scale=0.7]{img/pac/singleton.jpg}
+\caption{Patron de conception \code{Singleton}}
+\end{figure}
+
+Ce patron va permettre d'assurer qu'une seule instance de chacune des fabriques 
+est instanci\'ee pendant toute la dur\'ee de l'application.
+
+%*****************************************
+
+\subsection{Composants applicatifs}\index{Composants applicatifs}
+Les composants applicatifs sont présentés dans la section \ref{moteur audio} 
+page \pageref{moteur audio}.
+
+\subsection{Composants de présentation}\index{composants de presentation@Composants de présentation}
+Les classes implémentant les présentations des composants applicatifs sont 
+regroupés dans le package \code{gui.presentation}.
+
+Ce package regroupe à la fois les interfaces des présentations et les classes 
+implémentant ces interfaces. Il possède dix interfaces :
+\begin{description}
+    \item [IPFactory] : Décrit les méthodes permettant de créer les 
+    présentations des composants applicatifs.
+    \item [IPPort] :  Décrit les présentations des classes héritant de
+    \code{core.Port}
+    \item [IPPortIn] : Hérite de \code{IPPort} et décrit la présentation 
+    de \code{core.PortIn}.
+    \item [IPPortOut] : Hérite de \code{IPPort} et décrit la présentation 
+    de \code{core.PortOut}.
+    \item [IPParameter] : Décrit les présentations des classes héritant de 
+    \code{core.Parameter}.
+    \item [IPDiscreteParameter] : Hérite de \code{IPParameter} et décrit 
+    la présentation de \\
+\code{core.DiscreteParameter}.
+      \item [IPContinuousParameter] : Hérite de \code{IPParameter} et 
+      décrit la présentation de \\
+\code{core.ContinuousParameter}.
+    \item [IPModule] : Décrit la présentation des classes héritant de 
+      \code{core.modules.Module}.
+    \item [IPOscilloscope] : Hérite de \code{IPModule} et décrit la 
+      présentation de \\
+\code{core.modules.Oscilloscope}.
+    \item [IPSynthetizer] : Décrit la présentation de 
+      \code{core.Synthetizer}.
+\end{description}
+
+\newpage Le diagramme ci-dessous présente les interfaces ainsi que les liens 
+entre les différentes classes du package.
+
+\begin{figure}[h!] 
+\begin{center} 
+\includegraphics[scale=0.4]{img/pac/presentation-ai.jpg}
+\caption{Composants de présentation}
+\end{center}
+\end{figure}
+\newpage
+
+\subsubsection{PFactory}
+\code{PFactory} implémente \code{IPFactory}, c'est la fabrique de composants de 
+présentation du package \code{gui.presentation}. Elle est utilisée pour 
+découpler le contrôle de la présentation.
+
+\subsubsection{PPortIn et PPortOut}
+\code{PPortIn} et \code{PPortOut} héritent de
+\code{PPort} et implémentent respectivement \code{IPPortIn} 
+et \code{IPPortOut}. \code{PPort} implémente \code{IPPort} et étend 
+\code{JPanel}. Elle définit l'aspect graphique d'un port d'entrée ou de sortie.
+
+\code{PPortIn} est une zone sur laquelle on peut effectuer un drop. Le drop est 
+activé dans le constructeur de la manière suivante :
+\begin{verbatim}
+dropper = new ConnectorDropper(this); 
+dropper.activerDropListener();
+\end{verbatim}
+
+\code{PPortOut} est une zone sur laquelle on peut effectuer un drag. Le drag 
+est activé dans le constructeur de la manière suivante :
+\begin{verbatim}
+dragger = new ConnectorDragger(this); 
+dragger.activerDragListener();
+\end{verbatim}
+
+Le drag'n drop est ici utilisé pour connecter un port de sortie à un port 
+d'entrée (plus de détails dans la section \ref{interface} page 
+\pageref{interface}).
+
+\subsubsection{PDiscreteParameter et PContinuousParameter}
+\code{PDiscreteParameter} et \code{PContinuousParameter} héritent de 
+\code{PParameter}, et implémentent respectivement \code{IPDiscreteParameter} et 
+\code{IPContinuousParameter}. Leur aspect graphique est identique : il s'agit 
+d'un bouton que l'on peut tourner dans les deux sens.
+
+La classe \code{PParameter} implémente \code{IPParameter} et 
+étend \code{JPanel}. Elle définit les méthodes communes aux deux classes et 
+place les différents objets graphiques qui les composent.
+
+Le comportement du bouton est différent dans les deux classes : il tourne cran par 
+cran pour \code{PDiscreteParameter} et tourne d'un minimum vers un maximum pour 
+\code{PContinuousParameter}. \bigskip
+
+\code{PParameter} possède  une variable d'instance de  type 
+\code{RotatePanel}. \code{RotatePanel} permet d'effectuer une rotation sur une image. 
+La rotation est définie suivant trois angles : un minimum, un maximum et un 
+angle courant. Les classes \code{PDiscreteParameter} et \code{PContinuousParameter} 
+agissent sur la rotation de l'image via les méthodes respectives 
+\code{rotateDiscrete(boolean sens)} et \code{rotateContinuous(double f)} où 
+\code{f} représente un pourcentage.
+
+Une variable d'instance de type \code{PView} affiche de manière formatée des 
+informations sous forme de \code{JTextComponent}. \code{PDiscreteParameter} 
+affiche soit des chaines de caractères, soit des images, via des \code{JLabel}. 
+\code{PContinuousParameter} affiche des chaînes de caractères (valeur et unité 
+de mesure) et autorise une saisie, via un \code{JTextField}.
+
+Enfin, une variable d'instance de type
+\code{gui.}\code{presentation.}\\\code{parameterAction.}\code{ParameterCommand} 
+définit le code à exécuter lors d'une action de l'utilisateur sur cette 
+présentation.
+
+\subsubsection{PModule}
+\code{PModule} implémente \code{IPModule} et étend \code{JPanel}. Un des 
+objectifs fixés en début de projet est de ne pas créer de présentation 
+spécifique pour chaque type de module implémenté dans le package 
+\code{core.modules}.
+
+\code{PModule} est donc une présentation paramètrable respectant cette 
+contrainte.
+
+Les trois contructeurs de la classe sont les suivants :
+\begin{tabbing} 
+\hspace{0.7cm} \=  \\
+\code{public PModule(ICModule controle)} \\
+\> Constructeur principal. \\
+\code{public PModule(Collection<IPParameter> params, Collection<IPPort> pIn,}\\
+\> \code{ICModule controle)} \\
+\> Constructeur pour les modules sans port de sortie -- utilise le constructeur \\
+\> précédent. \\
+\code{public PModule(Collection<IPParameter> params, Collection<IPPort> pIn,} \\
+\> \code{IPPort pOut, ICModule controle)}\\
+\> Constructeur pour les modules avec un port de sortie -- utilise le constructeur\\
+\> précédent.
+\end{tabbing}
+
+
+Les paramètres d'entrée des constructeurs sont précisés ci-dessous :
+
+\begin{itemize}
+  \item \code{params} : les présentations des paramètres discrets et continus 
+  d'un module.
+  \item \code{pIn} : les présentations des ports d'entrée d'un module.
+  \item \code{pOut} : la présentation du port de sortie d'un module.
+  \item  \code{controle} : le contrôle du module.\bigskip
+\end{itemize}
+
+Tous les objets graphiques composant la présentation des modules sont 
+positionnés dynamiquement et en fonction de leur taille.\bigskip
+
+Les avantages procurés par cette présentation générique sont les suivants :
+\begin{enumerate}
+  \item Pas de couplages avec la présentation des ports et des paramètres des 
+  modules.
+  \item Si on ajoute un nouveau module conforme à \code{core.IModule}, il n'y a 
+  pas besoin de lui définir une présentation spécifique.
+  \item On peut étendre la classe si on veut ajouter une présentation 
+  particulière.
+  \item Gain de temps.\medskip
+\end{enumerate}
+
+Les inconvénients de cette présentation :
+\begin{enumerate}
+  \item Couplage fort avec l'API javax.Swing.
+\end{enumerate}
+
+\subsubsection{PSynthetizer}
+Cette classe implémente \code{IPSynthetizer} et étend \code{JDesktopPane}.
+
+Elle constitue le plan de travail dans lequel les différentes présentations de 
+modules vont être ajoutées, supprimées.
+
+C'est via cette présentation que l'utilisateur peut lancer la simulation en 
+temps réel et interagir avec le modèle métier.
+
+\subsection{Composants de contr\^ole}\index{composants de controle@Composants de contrôle}
+Les classes implémentant les contrôles des composants applicatifs sont 
+regroupés dans le package \code{gui.controle}.
+
+Ce package est indépendant de l'implémentation choisie pour les composants 
+applicatifs et de présentation. Il les connaît uniquement via leurs interfaces. 
+Il contient donc la liste des interfaces des composants de contrôle ainsi que 
+les classes qui les implémentent.
+
+L'interface d'un composant de contrôle hérite de l'interface du composant 
+applicatif correspondant. On y ajoute cependant la déclaration d'une méthode 
+supplémentaire permettant de récupérer le composant de présentation auquel il 
+est associé.
+
+Les interfaces contenues dans ce package sont les suivants :
+\begin{itemize}
+    \item \code{ICPortIn} : Hérite de \code{IPortIn} et décrit le contrôle  de \code{core.PortIn}.
+    \item \code{ICPortOut} : Hérite de \code{IPortOut} et décrit le contrôle  de \code{core.PortOut}.
+    \item \code{ICParameter} : Hérite de \code{IParameter} et décrit les contrôles des classes héritant de 
+    \code{core.Parameter}.
+    \item \code{ICDiscreteParameter} : Hérite de \code{ICParameter} et décrit 
+    le contrôle  de 
+    
+      \code{core.DiscreteParameter}.
+      \item \code{ICContinuousParameter} : Hérite de \code{ICParameter} et 
+      décrit le contrôle  de 
+      
+        \code{core.ContinuousParameter}.
+      \item \code{ICModule} : Hérite de \code{IModule} et décrit les contrôles  des classes héritant de 
+      \code{core.modules.Module}.
+      \item \code{ICSynthetizer} : Hérite de \code{ISynthetizer} et décrit le contrôle  de 
+      
+      \code{core.Synthetizer}.
+\end{itemize}
+
+\begin{description}
+\item[Remarque] : Il n'est pas nécessaire de définir une interface pour une nouvelle fabrique de composants de contrôle.
+L'interface utilisée est \code{core.IFactory}.
+\end{description}
+
+\subsubsection{CFactory}
+\code{CFactory} implémente \code{IFactory}, c'est la fabrique de composant de 
+contrôle. Cette fabrique implémente le même interface que la fabrique de 
+composants applicatifs \\ \code{core.AFactory}. Ceci nous permet de substituer 
+les composants de contrôle aux composants applicatifs.
+
+\newpage
+\subsubsection{CPortIn et CPortOut}
+\code{CPortIn} et \code{CPortOut} implémentent respectivement les interfaces 
+\code{ICPortIn} et \code{ICPortOut} comme on peut le voir sur les diagrammes ci-dessous.
+
+\begin{figure}[h!] 
+\centering\includegraphics[scale=0.6]{img/pac/controle_port_in.png}
+\center\includegraphics[scale=0.6]{img/pac/controle_port_out.png}
+\caption{Diagramme de classe contrôle des PortIn et PortOut}
+\end{figure}
+
+Ces deux classes ne servent que de relais, il n'y a pas de traitement particulier à 
+réaliser lors d'une modification de l'abstraction.
+
+Le constructeur de \code{CPortIn} illustre bien la manière dont les composants de contrôle du package créent leur abstraction et leur présentation.
+{\small
+\begin{verbatim}
+public CPortIn(String name) {
+    abstraction = ConcreteFactory.getAFactory().newPortIn(name);
+    presentation = ConcreteFactory.getPFactory().newPPortIn(name, this);
+}
+\end{verbatim}
+}
+
+\newpage
+\subsubsection{CContinuousParameter et CDiscreteParameter}
+\code{CContinuousParameter} et \code{CDiscreteParameter} implémentent respectivement les interfaces 
+\code{IContinuousParameter} et \code{ICDiscreteParameter}.
+
+\begin{figure}[h!] \centering\includegraphics[scale=0.6]{img/pac/controle_parameter.png}
+\caption{Diagramme de classe contrôle des ContinuousParameter et DiscreteParameter}
+\end{figure}
+\newpage
+
+L'utilisateur peut interagir avec les présentations de ces deux contrôles. Ces derniers 
+doivent donc maintenir la cohérence entre l'abstraction et la présentation.
+
+Les exemples suivants présentent le mécanisme 
+mis en \oe uvre dans les contrôles afin d'assurer cette cohérence.
+\bigskip
+
+{\bf Exemple -- classe \code{CDiscreteParameter}} : 
+{\small
+\begin{verbatim}
+public ParameterValue previous() {
+    ParameterValue tmp = abstraction.previous();
+    presentation.refreshView(tmp.toString());
+    presentation.rotate(false);
+    return tmp;
+}
+\end{verbatim}
+}
+
+{\bf Exemple -- classe \code{CContinuousParameter}} : 
+{\small
+\begin{verbatim}
+public void setDoubleValue(double value) {
+    abstraction.setDoubleValue(value);
+    presentation.rotateContinuous(abstraction.getRate());
+    presentation.setViewValue(abstraction.getCurrentValue().toString());
+}
+\end{verbatim}
+}
+
+\subsubsection{CModule}
+\code{CModule} est une classe abstraite implémentant \code{ICModule}. Toutes les 
+méthodes déclarées dans \code{IModule} et dans \code{ICModule} sont réellement 
+implémentées dans \code{CModule} et pas seulement déclarées.
+
+La présentation des modules n'interagit pas avec le modèle métier, les 
+contrôles des modules délégant les traitements à leur abstraction.
+
+Les sous-classes de \code{CModule} (CVCA, CVCO, CLFO, etc$\ldots$) sont 
+utilisées uniquement pour implémenter des traitements spécifiques pour chacun 
+des modules du package \code{core}, si besoin est. Il suffit alors de 
+surcharger une des méthodes héritées de \code{CModule}.
+
+\newpage
+
+Des traitements communs à tous les contrôles de module sont réalisés lors de 
+leur création. Afin de factoriser au mieux le code, \code{CModule} implémente 
+un constructeur générique  : {\small \code{public CModule(IModule abstraction)}}.
+Ce constructeur accepte en paramètre l'abstraction d'un contrôle de type \code{IModule}.
+
+Les sous-classes appels ensuite le constructeur de \code{CModule} comme dans 
+l'exemple suivant : 
+{\small
+\begin{verbatim}
+public class CLFO {
+    public CLFO() { 
+        super(ConcreteFactory.getAFactory().newLFO()); 
+    }
+    ...
+}
+\end{verbatim}
+
+Certains contrôles doivent pouvoir paramétrer les présentations de leurs 
+paramètres discrets. La méthode abstraite 
+\code{addPDiscreteParameters(Hashtable<String, DiscreteParameter> 
+discreteParameters)} définie dans \code{CModule} doit être implémentée dans 
+chaque sous-classe. Soit cette méthode ne fait rien soit elle réalise un 
+traitement sur les paramètres discrets comme dans l'exemple suivant :
+
+{\footnotesize
+\begin{verbatim}
+public class CLFO {
+    ...
+    public void addPDiscreteParameters(
+    		Hashtable<String, IDiscreteParameter>discreteParameters) {
+        ICDiscreteParameter shape = 
+        	(ICDiscreteParameter)discreteParameters.get(LFO.PARAM_SHAPE); 
+        shape.getPresentation().displayImages(); 
+    }
+    ...
+ }
+\end{verbatim}
+}
+
+La méthode \code{createPresentation(ArrayList<IPParameter> pParams, ArrayList<IPPort> pports, IPortOut po, CModule module)} permet de 
+redéfinir la présentation par défaut d'un module. 
+Cette présentation doit cependant être de type \code{IPModule}.
+
+L'exemple suivant présente l'utilisation de cette méthode pour le contrôle \code{COscilloscope} pour lequel une présentation différente à été créée :
+{\footnotesize
+\begin{verbatim}
+public class {
+    ...
+    protected void createPresentation(ArrayList<IPParameter> pParams, 
+                               ArrayList<IPPort> pports, IPortOut po, CModule module) { 
+        presentation = ConcreteFactory.getPFactory().newPOscilloscope(pports.get(0),this); 
+    }
+}
+\end{verbatim}
+}
+
+\newpage
+
+\begin{figure}[h!] \centering\includegraphics[scale=0.5]{img/pac/controle_module.png}
+\caption{Diagramme de classe contrôle CModule}
+\end{figure}
+\newpage
+
+\subsubsection{CSynthetizer}
+\code{CSynthetizer} implémente \code{ICSynthetizer}.
+
+ \begin{figure}[h!] \centering\includegraphics[scale=0.6]{img/pac/controle_synthe.png}
+\caption{Diagramme de classe contrôle Synthetizer}
+\end{figure}
+
+\code{CSynthetizer} ne fait principalement que déléguer les traitements à son 
+abstraction, à l'exception des deux traitements ci-dessous :
+\begin{verbatim}
+public void playSynthetizer() {
+   abstraction.playSynthetizer(); 
+   presentation.setIsPlaying(abstraction.isPlaying());
+}
+public void stopSynthetizer() {
+   abstraction.stopSynthetizer(); 
+   presentation.setIsPlaying(abstraction.isPlaying());
+}
+\end{verbatim}
+
+
+
+
+
+%*****************************************
+
+\subsection{Fabriques de composants}
+
+
+\code{ConcreteFactory} est la classe permettant d'accèder aux différentes fabriques de composants.
+Cette classe propose quatre méthodes pour obtenir les différentes fabriques : 
+\begin{description}
+  \item [\code{getAFactory}] :
+  
+Elle permet à un contrôle d'obtenir la fabrique des composants applicatifs.
+  \item [\code{getCFactory}] : 
+  
+Elle permet à un contrôle d'obtenir la fabrique des composants de contrôle.  
+  \item [\code{getPFactory}] : 
+  
+Elle permet à un contrôle d'obtenir la fabrique des composants de présentation.
+  \item [\code{getFactory}] : 
+  
+Elle est utilisé par une abstraction et retourne une \code{CFactory} si une 
+\code{CFactory} a été instanciée, ou une \code{AFactory} par défaut.
+\end{description}
+
+\newpage
+
+\begin{figure}[h!] \centering\includegraphics[width=\textwidth]{img/pac/concreteFactory-aid.jpg}
+\caption{Fabriques de composants}
+\end{figure}
+
+\newpage
+
+%*****************************************
+
+\subsection{Diagrammes UML des composants PAC d\'evelopp\'es.}
+
+\subsubsection{Composant PAC Synthetizer}
+\begin{figure}[h!] \centering\includegraphics[width=\textwidth]{img/pac/pac_synthe.jpg}
+\caption{Composant PAC Synthetizer}
+\end{figure}
+\newpage
+
+\subsubsection{Composant PAC Module}
+\begin{figure}[h!] \centering\includegraphics[width=\textwidth]{img/pac/pac_module.jpg}
+\caption{Composant PAC Module}
+\end{figure}
+\newpage
+
+\subsubsection{Composant PAC Oscilloscope}
+\begin{figure}[h!] 
+\centering\includegraphics[width=\textwidth]{img/pac/pac_oscilloscope.jpg}
+\caption{Composant PAC Oscilloscope}
+\end{figure}
+\newpage
+
+\subsubsection{Composant PAC DiscreteParameter}
+\begin{figure}[h!] 
+\centering\includegraphics[width=\textwidth]{img/pac/pac_discreteParameter.jpg}
+\caption{Composant PAC DiscreteParameter}
+\end{figure}
+\newpage
+
+\subsubsection{Composant PAC ContinuousParameter}
+\begin{figure}[h!] 
+\centering\includegraphics[width=\textwidth]{img/pac/pac_continuousParameter.jpg}
+\caption{Composant PAC ContinuousParameter}
+\end{figure}
+\newpage
+
+\subsubsection{Composant PAC PortIn}
+\begin{figure}[h!] \centering\includegraphics[width=\textwidth]{img/pac/pac_portIn.jpg}
+\caption{Composant PAC PortIn}
+\end{figure}
+\newpage
+
+\subsubsection{Composant PAC PortOut}
+\begin{figure}[h!] 
+\centering\includegraphics[width=\textwidth]{img/pac/pac_portOut.jpg}
+\caption{Composant PAC PortOut}
+\end{figure}
+\newpage

@@ -1,0 +1,72 @@
+\section{Installation de \tth}
+\label{installation}
+\index{Installation}
+
+\subsection{Configuration requise}
+\begin{description}
+\index{Processeur}
+\item[Processeur :] CISC (Intel Pentium\texttrademark, AMD 
+Athlon\texttrademark, \ldots) ou RISC (IBM PowerPC\texttrademark, Motorola 
+Power G4/5\texttrademark, Sun UltraSparc\texttrademark, \ldots) cadencé à 2 GHz 
+ou plus.
+\item[Système d'exploitation :] tout système récent pour lequel existe un 
+environnement Java 5.0\texttrademark.
+\item[Runtime :] \index{Java}Java Runtime Environment (JRE) 5.0\texttrademark
+\item[Matériel :] carte son reconnue par le système d'exploitation et gérée par 
+Java 5.0.
+\end{description} 
+
+\subsection{Contrôles}
+
+Vérification de la version de java installée sur la machine
+
+\subsubsection{sur MacOS X}
+\index{Installation!MacOS}
+\begin{verbatim}
+	$ /System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Commands/java -version
+	   java version "1.5.0_05"
+	   Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_05-83)
+	   Java HotSpot(TM) Client VM (build 1.5.0_05-48, mixed mode, sharing)
+	$ tar xjf tetrahead.tar.bz2
+	$ cd tetrahead
+\end{verbatim}
+
+Commande de lancement de \tth à mettre en raccourci :\\
+\begin{verbatim}
+	$ /System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Commands/java -jar tetrahead.jar
+\end{verbatim} 
+
+\subsubsection{sur Linux}
+\index{Installation!Linux}
+\begin{verbatim}
+	$ /usr/java/jdk1.5.0_03/bin/java -version
+	   java version "1.5.0_03"
+	   Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_03-b07)
+	   Java HotSpot(TM) Client VM (build 1.5.0_03-b07, mixed mode, sharing)
+	$ tar xjf tetrahead.tar.bz2
+	$ cd tetrahead
+\end{verbatim} 
+
+Commande de lancement de \tth à mettre en raccourci :
+\begin{verbatim}
+	$ /usr/java/jdk1.5.0\_03/bin/java -jar tetrahead.jar
+\end{verbatim}
+
+\subsubsection{sur Windows}
+\index{Installation!Windows}
+Ouvrir une console, faire :
+\begin{verbatim}
+	$ java -version
+	   java version "1.5.0_06"
+	   Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0_06-b05)
+	   Java HotSpot(TM) Client VM (build 1.5.0_06-b05, mixed mode, sharing)
+\end{verbatim} 
+
+Décompresser le fichier \code{tetrahead.tar.bz2} dans le répertoire de votre choix.\\
+Il s'y créée alors un sous-répertoire \code{tetrahead}.
+\medskip
+
+Pour mettre en raccourci la commande de lancement de \tth, faire un clic droit sur 
+le fichier \code{tetrahead.jar}, puis choisir \emph{Créer un raccourci}.\\
+Faire un double clic sur le raccourci ainsi créé pour lancer \tth.
+

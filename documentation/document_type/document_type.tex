@@ -1,0 +1,172 @@
+% Yvonnick Esnault - yvonnick.e@free.fr 
+% Gaetan Le Brun - gaetan.lebrun@gmail.com
+% Thibaut LeliËvre - thibaut.lelievre@voila.fr
+% Vincent MahÈ - vmahe@free.fr
+% Les chapitres peuvent commencer sur une page paire ou impaire
+%openany
+\documentclass[a4paper,11pt]{article}
+%\frontmatter
+
+\usepackage[T1]{fontenc}
+\usepackage{ae,aecompl}
+\usepackage[frenchb]{babel}
+\usepackage[pdftex]{graphicx}
+\usepackage[french]{minitoc}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+\usepackage{textcomp}
+%\usepackage [applemac] {inputenc} % les accents
+\usepackage{verbatim}
+\usepackage{float}
+
+\evensidemargin=13pt
+\oddsidemargin=13pt
+\topmargin=-\headheight \advance\topmargin by -\headsep
+\textwidth=14.59cm \textheight=21.62cm % normal A4, 1'' margin % 24.62cm
+\setlength{\parindent}{8mm} % on remet le retrait de paragraphe
+
+%%% My Vars %%%
+\def\mytitle{TetraHead}
+\def\mysubject{Synth\'etiseur}
+\def\mydate{\today}
+\def\myversion{1.0}
+\def\me{\small  Yvonnick Esnault - GaÎtan Le Brun - Thibaut LeliËvre - Vincent MahÈ}
+\def\meandmail{\me \\{\normalsize\tt \mymail}}
+
+%%% Fancy headers to add logo, line \ldots{} %%%
+\pagestyle{fancy}
+\fancyhf{}
+
+% redéfinition du style plain pour les pages spéciales (chapter)
+\fancypagestyle{plain}{
+ \fancyhead{}
+ \renewcommand{\headrulewidth}{0pt}
+ \renewcommand{\footrulewidth}{0.4pt}
+ \lfoot{\textsl{\me\space} \\
+\mysubject}
+ \cfoot{}
+ \rfoot{\textsl{Page \thepage \space sur \pageref{LastPage} }}
+}
+
+\renewcommand{\headsep}{50pt}
+
+%\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+%\lhead[\thepage]{\rightmark}
+%\rhead[\leftmark]{\thepage}
+
+% Header
+%\lhead{\includegraphics[width=2cm]{../document_type/images/logo.png}}
+\chead{\mysubject} %\leftmark : contient le nom du chapitre courant.
+%\rhead{\includegraphics[width=2cm]{images/logo_itin.png}}
+
+%Footer
+\lfoot{\textsl{\me\space}}
+\cfoot{}
+\rfoot{\textsl{Page \thepage \space sur \pageref{LastPage} }}
+
+%Affiche les ligne en haut, et en bas
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+%%% bookmarks, linking in pdf %%%
+\hypersetup{pdfauthor={\me},%
+            pdftitle={\mytitle},%
+            pdfsubject={\mysubject},%
+            colorlinks,%
+            citecolor=black,%
+            filecolor=black,%
+            linkcolor=black,%
+            urlcolor=black,%
+            pdftex}
+
+%%% Commande pour supprimer en-têtes
+%%% et pied de page des pages vides
+\newcommand{\clearemptydoublepage}{%
+\newpage{\pagestyle{empty}\cleardoublepage}}
+
+%%% Environnement pour le tableau de l'historique
+\newenvironment{historique}
+{
+
+\begin{center}
+{\huge \textbf{Historique}}
+
+\vspace{3cm}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Date} & \textbf{Auteur} & \textbf{Modifications} & \textbf{Version} \\
+\hline
+}
+{
+\end{tabular}\end{center}
+\newpage
+}
+
+\newcommand{\histo}[4]
+{#1 & #2 & #3 & #4 \\
+\hline
+}
+
+
+%\newcommand{\info}[1]{
+%\begin{figure}
+%  \framebox[\textwidth][l]{
+%   \begin{minipage}[c]{0.1\textwidth}
+%     \medskip
+%
+%      \includegraphics{../document_type/images/info.png}
+%      \medskip
+%
+%   \end{minipage} \hfill
+%   \begin{minipage}[c]{0.8\textwidth}
+%     \medskip
+%
+%     #1\medskip
+%
+%   \end{minipage} \hfill
+%   \begin{minipage}[c]{0.1\textwidth}
+%     \makebox[30pt]{}\par
+%   \end{minipage}
+%}
+%\end{figure}
+%}
+
+\newcommand{\encadre}[2]{
+\begin{figure}[!h]
+  \framebox[\textwidth][l]{
+   \begin{minipage}[c]{0.1\textwidth}
+     \medskip
+
+      \includegraphics{#1}
+      \medskip
+
+   \end{minipage} \hfill
+   \begin{minipage}[c]{0.8\textwidth}
+     \medskip
+
+     #2\medskip
+
+   \end{minipage} \hfill
+   \begin{minipage}[c]{0.1\textwidth}
+     \makebox[30pt]{}\par
+   \end{minipage}
+}
+\end{figure}
+}
+
+\newcommand{\info}[1]{
+\encadre{../document_type/images/info.png}{#1}
+}
+
+\newcommand{\attention}[1]{
+\encadre{../document_type/images/attention.png}{#1}
+}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\newcommand{\subsubsubsection}[1]{\textbf{#1}
+\medskip
+
+}

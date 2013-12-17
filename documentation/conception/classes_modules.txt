@@ -1,0 +1,160 @@
+************************
+** Classe Synthetizer **
+************************
+-> Attributs :
+   -modules : Collection<Module>   
+-> Méthodes :
+   +addModule(module : Module)
+   +remove(module : Module)
+   +orderModules()
+   +play()
+   +pause()
+   +stop()
+
+*****************************
+** Classe SynthetizerState **
+*****************************
+->Attributs :
+->Méthodes :
+  +play()
+  +pause()
+  +stop()
+------------------------------------------------
+-- Classe Playing() hérite de SynthetizerState--
+------------------------------------------------
+-------------------------------------------------
+-- Classe Stopped() hérite de SynthetizerState --
+-------------------------------------------------
+----------------------------------------------
+-- Classe Paused hérite de SynthetizerState --
+----------------------------------------------
+
+*****************************
+** Classe abstraite Module **
+*****************************
+-> Attributs :
+   -sigOut : PortOut
+-> Méthodes :
+   +@compute() //algo du module
+   +@getParameters() : HashMap<Parameter>
+   +@getIns() : HashMap<PortIn>
+   +@getOut() : PortOut
+   +@getParameter(name : String) : Parameter
+   +@getIn(name : String) : PortIn
+   +@setParameter(name : String, value : Parameter)
+   +@setIn(name : String, value : PortIn)
+
+---------------------------------
+-- Classe VCO hérite de Module --
+---------------------------------
+-> Attributs :
+   -signal_type : DiscreteParameter
+   -pitch : ContinuousParameter
+   -pitchIn : PortIn
+
+-> Méthodes :
+   -computeSine()
+   -computeSawTooth()
+   -computeSquare()
+   -computeTriangle()
+   +getPitch() : ContinuousParameter
+   +getPitchIn() : PortIn
+   +getSignalType() : DiscreteParameter
+
+----------------------------------
+-- Classe VCF hérite de  Module --
+----------------------------------
+-> Attributs :
+   -sigIn : PortIn
+   -cutOff : DiscreteParameter
+   -resonnance : ContinuousParameter
+   -cutOffIn : PortIn 
+
+-> Méthodes :
+
+-----------------------------------
+-- Classe ADSR hérite de  Module --
+-----------------------------------
+-> Attributs :
+   -attack : ContinuousParameter
+   -delay : ContinuousParameter
+   -sustain : ContinuousParameter
+   -release : ContinuousParameter
+
+-> Méthodes :
+
+------------------------------------
+-- Classe MIXER hérite de  Module --
+------------------------------------
+-> Attributs :
+   -sigIns : HashMap<PortIn>
+
+-> Méthodes : 
+
+----------------------------------
+-- Classe OUT hérite de  Module --
+----------------------------------
+-> Attributs :
+   -sigIn : PortIn 
+   -outPut : DiscreteParameter
+-> Méthodes :
+
+
+********************************
+** Classe abstraite Parameter **
+********************************
+->Attributs : 
+  -currentValue : ParameterValue
+->Méthodes :
+  +getCurrentValue() : ParameterValue
+  +setCurrentValue(value : ParameterValue)
+
+------------------------------
+-- Classe DiscreteParameter --
+------------------------------
+->Attributs :
+  -values : Collection<ParameterValue>
+  -currentIndex : Integer
+->Méthodes :
+  +numberOfValue() : Integer
+  +previous()
+  +next()
+
+--------------------------------
+-- Classe ContinuousParameter --
+--------------------------------
+->Attributs :
+  -min : ParameterValue
+  -max : ParameterValue
+->Méthodes :
+  +getRate() : Float
+  +setRate(n : Float)
+
+
+***************************
+** Classe abstraite Port **
+***************************
+->Attributs :
+  -isConnected : Boolean
+  -contents : Float[]
+->Méthodes :
+  +@write(contents Float[])
+  +@read() : Float[]
+  +@Boolean isConnected()
+
+----------------------------------
+-- Classe PortIn hérite de Port --
+----------------------------------
+->Attributs :
+->Méthodes :
+  +connect(out : PortOut)
+  +disconnect()
+
+-----------------------------------
+-- Classe PortOut hérite de Port --
+-----------------------------------
+->Attributs : 
+  -connections : Collection<PortIn>
+->Méthodes :
+  +addConnection(in : PortIn)
+  +removeConnection(in : PortIn)
