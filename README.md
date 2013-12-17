@@ -1,12 +1,17 @@
- This program is a sound synthetiser.
+This program is a sound synthetiser written in Java.
+
  
- It works with Java.
- 
- Authors: Yvonnick Esnault, Gaetan Le Brun, Thibaut Lelievre, Vincent Mahe
+Authors: Yvonnick Esnault, Gaetan Le Brun, Thibaut Lelievre, Vincent Mahe
  
  This program is a free software distributed under GNU/GPL license,
  except the "core.modules" package which is licensed under GNU/LGPL. 
  For more details look at the COPYING.txt and COPYING2.txt files.
+
+## How to
+
+Download the release on https://github.com/yesnault/tetrahead/releases
+Run TetraHead.jar
+
 
 ## Examples
 
